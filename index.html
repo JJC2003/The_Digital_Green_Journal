@@ -625,11 +625,10 @@
       .five-r-grid { grid-template-columns: repeat(3, 1fr); }
     }
     @media (max-width: 900px) {
-      /* NAV FIX — align properly on mobile/tablet */
       nav { padding: 12px 16px; }
       nav.scrolled { padding: 10px 16px; }
-      .nav-links { display: none; }
-      #hamburger { display: flex; }
+      .nav-links { display: none !important; }
+      #hamburger { display: flex !important; }
       .container { padding: 0 16px; }
       .content-body, .content-body.reverse { grid-template-columns: 1fr; }
       .content-body.reverse .sidebar { order: 0; }
@@ -642,6 +641,11 @@
       .section { padding: 56px 0; }
     }
     @media (max-width: 600px) {
+      nav { padding: 10px 14px; }
+      nav.scrolled { padding: 8px 14px; }
+      .nav-links { display: none !important; }
+      #hamburger { display: flex !important; }
+      .nav-logo { font-size: 0.95rem; }
       .five-r-grid { grid-template-columns: 1fr 1fr; }
       .r-card-wrapper { height: 230px; }
       .r-letter { font-size: 1.6rem; }
@@ -650,11 +654,17 @@
       .bio-grid { grid-template-columns: 1fr; }
       footer { padding: 28px 16px 40px; }
       .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
-      .topic-tab { padding: 12px 14px; min-width: 80px; }
-      .topic-tab .t-label { font-size: 0.65rem; }
+      .topic-tab { padding: 12px 10px; min-width: 70px; }
+      .topic-tab .t-label { font-size: 0.62rem; }
+      .topic-tab .t-num { display: none; }
+      h2.section-title { font-size: 1.8rem; }
+      .section-intro { font-size: 0.97rem; }
+      .stat-value { font-size: 1.9rem; }
     }
     @media (max-width: 400px) {
       .five-r-grid { grid-template-columns: 1fr; }
+      .topic-tab .t-icon { font-size: 1.2rem; }
+      .topic-tab .t-label { font-size: 0.58rem; }
     }
   </style>
 </head>
@@ -743,7 +753,7 @@
     <div class="t-label">Global Warming</div>
   </a>
   <a href="#climate-change" class="topic-tab">
-    <div class="t-icon">🌦️</div>
+    <div class="t-icon">🌪️</div>
     <div class="t-num">02</div>
     <div class="t-label">Climate Change</div>
   </a>

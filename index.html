@@ -1,561 +1,1434 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Digital Green Journal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
+    /* ── RESET & BASE ───────────────────────────────────────────────── */
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
     :root {
-      --bg:        #0a0f0b;
-      --bg2:       #0f1710;
-      --bg3:       #141f15;
-      --border:    rgba(255,255,255,0.07);
-      --green:     #5cb87a;
-      --green-dim: #3d7a54;
-      --teal:      #4db8a0;
-      --gold:      #c9a96e;
-      --red:       #e07070;
-      --text:      #e8f0ea;
-      --text2:     #a8bfad;
-      --text3:     #6a8070;
-      --muted:     #4a5e50;
-      --radius:    12px;
-      --radius-lg: 20px;
-      --max:       1140px;
+      --bg0:      #050d07;
+      --bg1:      #081209;
+      --bg2:      #0d1c0f;
+      --bg3:      #112514;
+      --glass:    rgba(13,28,15,0.72);
+      --border:   rgba(74,222,128,0.12);
+      --green1:   #4ade80;
+      --green2:   #22c55e;
+      --green3:   #16a34a;
+      --teal:     #2dd4bf;
+      --gold:     #d4a96a;
+      --gold2:    #a3855c;
+      --red:      #f87171;
+
+      /* ── READABILITY IMPROVEMENTS ── */
+      /* Boosted contrast: text0 stays white, text1 goes brighter, text2 is now clearly readable */
+      --text0:    #f0fdf4;      /* headings / hero — unchanged */
+      --text1:    #d4f5e2;      /* primary prose — was #bbf7d0, now softer cream-green */
+      --text2:    #a8d5bc;      /* secondary prose — was #86efac (too saturated), now warm muted green */
+      --text3:    #4ade80;
+      --muted:    #7a8f82;      /* was #6b7280, slightly brighter */
+
+      /* Type scale improvements */
+      --prose-size:   1.0625rem;   /* 17px body text — was 1rem/16px */
+      --prose-lh:     1.85;        /* taller line-height for long reads */
+      --prose-ls:     0.01em;      /* slight tracking helps legibility */
+
+      --radius:   16px;
+      --radius-lg:24px;
     }
-
-    html { scroll-behavior: smooth; font-size: 16px; }
-
+    html { scroll-behavior: smooth; }
     body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Outfit', sans-serif;
-      font-weight: 400;
+      background: var(--bg0);
+      color: var(--text0);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
       line-height: 1.7;
       overflow-x: hidden;
     }
+    ::selection { background: var(--green3); color: #fff; }
 
-    ::selection { background: var(--green-dim); color: #fff; }
+    /* ── SCROLLBAR ──────────────────────────────────────────────────── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg0); }
+    ::-webkit-scrollbar-thumb { background: var(--green3); border-radius: 3px; }
 
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--green-dim); border-radius: 2px; }
-
-    /* ── READING PROGRESS ── */
-    #rp {
-      position: fixed; top: 0; left: 0; height: 2px; width: 0;
-      background: var(--green); z-index: 9999;
+    /* ── PROGRESS BAR ───────────────────────────────────────────────── */
+    #progress-bar {
+      position: fixed; top: 0; left: 0; height: 3px;
+      background: linear-gradient(90deg, var(--green1), var(--teal));
+      width: 0%; z-index: 9999;
       transition: width 0.1s linear;
+      box-shadow: 0 0 10px var(--green1);
     }
 
-    /* ── NAV ── */
+    /* ── NOISE OVERLAY ──────────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+      opacity: 0.4;
+    }
+
+    /* ── NAV ────────────────────────────────────────────────────────── */
     nav {
       position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0 32px; height: 60px;
-      transition: background 0.3s, border-color 0.3s;
+      padding: 16px 48px;
+      transition: all 0.4s ease;
     }
     nav.scrolled {
-      background: rgba(10,15,11,0.95);
-      backdrop-filter: blur(16px);
+      background: rgba(5,13,7,0.9);
+      backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
+      padding: 12px 48px;
     }
-    .nav-brand {
-      font-family: 'Instrument Serif', serif;
-      font-size: 1.1rem; color: var(--text);
-      text-decoration: none; display: flex; align-items: center; gap: 8px;
-      white-space: nowrap; flex-shrink: 0;
+    .nav-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--green1);
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      display: flex; align-items: center; gap: 8px;
     }
-    .nav-brand .leaf { color: var(--green); }
+    .nav-logo span { color: var(--text0); }
     .nav-links {
-      display: flex; align-items: center; gap: 4px;
-      list-style: none; margin-left: auto;
+      display: flex; gap: 8px; list-style: none;
     }
     .nav-links a {
-      font-size: 0.78rem; font-weight: 500;
-      letter-spacing: 0.06em; text-transform: uppercase;
-      color: var(--text3); text-decoration: none;
-      padding: 5px 12px; border-radius: 6px;
-      transition: color 0.2s, background 0.2s; white-space: nowrap;
+      color: var(--text1);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 999px;
+      transition: all 0.25s ease;
     }
-    .nav-links a:hover { color: var(--text); background: rgba(255,255,255,0.05); }
-    .nav-links a.active { color: var(--green); }
-
-    /* hamburger */
-    #ham { display: none; flex-direction: column; gap: 4px; cursor: pointer; background: none; border: none; padding: 6px; flex-shrink: 0; }
-    #ham span { display: block; width: 20px; height: 1.5px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
-    #mob {
-      display: none; position: fixed; inset: 0; z-index: 998;
-      background: rgba(10,15,11,0.98);
-      flex-direction: column; align-items: center; justify-content: center; gap: 28px;
+    .nav-links a:hover {
+      color: var(--green1);
+      background: rgba(74,222,128,0.08);
     }
-    #mob.open { display: flex; }
-    #mob a { font-family: 'Instrument Serif', serif; font-size: 1.8rem; color: var(--text); text-decoration: none; transition: color 0.2s; }
-    #mob a:hover { color: var(--green); }
-    #mob-close { position: absolute; top: 20px; right: 24px; background: none; border: none; cursor: pointer; font-size: 1.5rem; color: var(--text3); }
+    .nav-links a.active {
+      color: var(--bg0);
+      background: var(--green1);
+    }
+    #hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px;
+      background: none;
+      border: none;
+    }
+    #hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--text0); border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    #mobile-menu {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(5,13,7,0.97);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    #mobile-menu.open { display: flex; }
+    #mobile-menu a {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--text0);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    #mobile-menu a:hover { color: var(--green1); }
+    #close-menu {
+      position: absolute; top: 20px; right: 24px;
+      background: none; border: none; cursor: pointer;
+      font-size: 2rem; color: var(--text1);
+    }
 
-    /* ── HERO ── */
+    /* ── HERO ───────────────────────────────────────────────────────── */
     #hero {
-      min-height: 100svh; display: flex; flex-direction: column;
+      position: relative; min-height: 100vh;
+      display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      text-align: center; padding: 100px 24px 80px;
-      position: relative; overflow: hidden;
+      text-align: center; overflow: hidden;
+      padding: 120px 24px 80px;
     }
-    .hero-bg {
+    #hero-canvas {
       position: absolute; inset: 0; z-index: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(92,184,122,0.08) 0%, transparent 70%);
     }
-    .hero-content { position: relative; z-index: 1; max-width: 760px; }
-    .hero-eyebrow {
+    .hero-glow {
+      position: absolute;
+      border-radius: 50%; filter: blur(80px); pointer-events: none;
+    }
+    .hero-glow.g1 {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(74,222,128,0.15) 0%, transparent 70%);
+      top: -100px; left: 50%; transform: translateX(-50%);
+    }
+    .hero-glow.g2 {
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(45,212,191,0.1) 0%, transparent 70%);
+      bottom: 0; right: 10%;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 800px; }
+    .hero-tag {
       display: inline-flex; align-items: center; gap: 8px;
-      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.14em;
-      text-transform: uppercase; color: var(--green);
-      margin-bottom: 28px; opacity: 0;
-      animation: fadeUp 0.7s 0.2s ease forwards;
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--green1);
+      border: 1px solid rgba(74,222,128,0.25);
+      border-radius: 999px;
+      padding: 6px 18px;
+      margin-bottom: 32px;
+      background: rgba(74,222,128,0.06);
+      animation: fadeInUp 0.8s ease both;
     }
-    .dot-pulse {
-      width: 6px; height: 6px; background: var(--green); border-radius: 50%;
-      animation: pulse 2.5s ease-in-out infinite;
+    .hero-tag::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--green1);
+      border-radius: 50%;
+      animation: pulse-dot 2s infinite;
     }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.3;transform:scale(0.6)} }
-    h1 {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(2.8rem, 7vw, 5.2rem);
-      font-weight: 400; line-height: 1.08; letter-spacing: -0.01em;
-      margin-bottom: 24px; opacity: 0;
-      animation: fadeUp 0.7s 0.35s ease forwards;
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.7); }
     }
-    h1 em { font-style: italic; color: var(--green); }
-    .hero-sub {
-      font-size: clamp(1rem, 2vw, 1.15rem); color: var(--text2);
-      line-height: 1.8; max-width: 540px; margin: 0 auto 44px;
-      opacity: 0; animation: fadeUp 0.7s 0.5s ease forwards;
+    h1.hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.8rem, 7vw, 5.5rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+      animation: fadeInUp 0.8s 0.15s ease both;
     }
-    .hero-btns {
-      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-      opacity: 0; animation: fadeUp 0.7s 0.65s ease forwards;
+    h1.hero-title em {
+      font-style: italic;
+      color: var(--green1);
+    }
+    .hero-desc {
+      font-size: clamp(1.05rem, 2vw, 1.25rem);  /* bumped up */
+      color: var(--text1);                        /* was text2 — brighter */
+      max-width: 600px;
+      margin: 0 auto 48px;
+      line-height: 1.8;
+      animation: fadeInUp 0.8s 0.3s ease both;
+    }
+    .hero-cta {
+      display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+      animation: fadeInUp 0.8s 0.45s ease both;
     }
     .btn {
       display: inline-flex; align-items: center; gap: 8px;
-      padding: 12px 26px; border-radius: 999px;
-      font-size: 0.88rem; font-weight: 600; cursor: pointer;
-      text-decoration: none; border: none; transition: all 0.25s;
+      padding: 14px 28px; border-radius: 999px;
+      font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; text-decoration: none;
+      transition: all 0.3s ease;
+      border: none;
     }
-    .btn-primary { background: var(--green); color: #0a0f0b; }
-    .btn-primary:hover { background: #6fd492; transform: translateY(-2px); }
-    .btn-ghost { border: 1px solid var(--border); color: var(--text2); background: transparent; }
-    .btn-ghost:hover { border-color: rgba(255,255,255,0.15); color: var(--text); }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .btn-primary {
+      background: var(--green1); color: var(--bg0);
+      box-shadow: 0 0 30px rgba(74,222,128,0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 45px rgba(74,222,128,0.5);
+    }
+    .btn-outline {
+      border: 1px solid rgba(74,222,128,0.3);
+      color: var(--text0);
+      background: rgba(74,222,128,0.05);
+    }
+    .btn-outline:hover {
+      background: rgba(74,222,128,0.1);
+      border-color: var(--green1);
+      transform: translateY(-2px);
+    }
+    .hero-scroll {
+      position: absolute; bottom: 40px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      z-index: 2;
+      animation: fadeInUp 0.8s 0.6s ease both;
+    }
+    .hero-scroll span {
+      font-size: 0.7rem; letter-spacing: 0.15em;
+      text-transform: uppercase; color: var(--muted);
+    }
+    .scroll-line {
+      width: 1px; height: 48px;
+      background: linear-gradient(to bottom, var(--green1), transparent);
+      animation: scroll-anim 2s infinite;
+    }
+    @keyframes scroll-anim {
+      0% { transform: scaleY(0); transform-origin: top; }
+      50% { transform: scaleY(1); transform-origin: top; }
+      51% { transform: scaleY(1); transform-origin: bottom; }
+      100% { transform: scaleY(0); transform-origin: bottom; }
+    }
 
-    /* ── TOPICS STRIP ── */
-    #topics {
-      display: flex; overflow-x: auto; background: var(--bg2);
-      border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
-      scrollbar-width: none; position: sticky; top: 60px; z-index: 900;
-    }
-    #topics::-webkit-scrollbar { display: none; }
-    .t-tab {
-      flex: 1 0 auto; min-width: 130px;
-      display: flex; flex-direction: column; align-items: center;
-      gap: 4px; padding: 16px 20px;
-      text-decoration: none; border-right: 1px solid var(--border);
-      transition: background 0.2s; position: relative;
-    }
-    .t-tab:last-child { border-right: none; }
-    .t-tab::after {
-      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
-      background: var(--green); transform: scaleX(0); transition: transform 0.25s;
-    }
-    .t-tab:hover::after, .t-tab.active::after { transform: scaleX(1); }
-    .t-tab:hover, .t-tab.active { background: rgba(92,184,122,0.05); }
-    .t-icon { font-size: 1.25rem; }
-    .t-code { font-size: 0.62rem; font-family: 'DM Mono', monospace; color: var(--muted); letter-spacing: 0.1em; }
-    .t-name { font-size: 0.72rem; font-weight: 600; color: var(--text2); white-space: nowrap; }
-    .t-tab.active .t-name, .t-tab:hover .t-name { color: var(--green); }
-
-    /* ── SECTIONS ── */
-    .section {
-      padding: 96px 0;
+    /* ── TOPICS NAV STRIP ───────────────────────────────────────────── */
+    #topics-nav {
+      position: relative; z-index: 10;
+      display: flex; overflow-x: auto; gap: 0;
+      background: var(--bg1);
+      border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
+      scrollbar-width: none;
     }
-    .section:nth-child(even) { background: var(--bg2); }
-    .wrap { max-width: var(--max); margin: 0 auto; padding: 0 32px; }
+    #topics-nav::-webkit-scrollbar { display: none; }
+    .topic-tab {
+      flex: 0 0 auto;
+      display: flex; flex-direction: column; align-items: center;
+      gap: 6px;
+      padding: 20px 32px;
+      cursor: pointer;
+      border-right: 1px solid var(--border);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .topic-tab::after {
+      content: '';
+      position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      background: var(--green1);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+    .topic-tab:hover::after, .topic-tab.active::after { transform: scaleX(1); }
+    .topic-tab:hover { background: var(--bg2); }
+    .topic-tab.active { background: var(--bg2); }
+    .topic-tab .t-icon { font-size: 1.5rem; }
+    .topic-tab .t-num {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem; color: var(--green3);
+      letter-spacing: 0.1em;
+    }
+    .topic-tab .t-label {
+      font-size: 0.78rem; font-weight: 600;
+      color: var(--text1); white-space: nowrap;  /* was text2 */
+    }
 
-    /* section header */
-    .sec-hd { margin-bottom: 56px; }
-    .sec-label {
-      display: inline-flex; align-items: center; gap: 10px;
-      font-size: 0.7rem; font-weight: 600; letter-spacing: 0.16em;
-      text-transform: uppercase; color: var(--green); margin-bottom: 14px;
+    /* ── SECTION LAYOUT ─────────────────────────────────────────────── */
+    .section {
+      position: relative; z-index: 1;
+      padding: 100px 0;
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
     }
-    .sec-label::before { content: ''; width: 24px; height: 1px; background: var(--green); }
-    .sec-num {
-      font-family: 'DM Mono', monospace; font-size: 0.72rem;
-      color: var(--muted); letter-spacing: 0.1em; margin-bottom: 10px;
+    .section:nth-child(odd) { background: var(--bg0); }
+    .section:nth-child(even) { background: var(--bg1); }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 48px;
     }
-    h2 {
-      font-family: 'Instrument Serif', serif;
-      font-size: clamp(1.9rem, 4vw, 2.8rem);
-      font-weight: 400; line-height: 1.15; letter-spacing: -0.01em;
-      margin-bottom: 14px;
+    .section-header {
+      display: flex; gap: 24px;
+      align-items: flex-start;
+      margin-bottom: 64px;
     }
-    h2 em { font-style: italic; color: var(--green); }
-    .sec-intro { font-size: 1.05rem; color: var(--text2); line-height: 1.8; max-width: 620px; }
+    .section-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem; font-weight: 900;
+      line-height: 1;
+      color: rgba(74,222,128,0.08);
+      flex-shrink: 0;
+      user-select: none;
+    }
+    .section-title-group { flex: 1; }
+    .section-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.7rem; font-weight: 600;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--green1); margin-bottom: 12px;
+    }
+    .section-tag::before {
+      content: ''; width: 20px; height: 1px;
+      background: var(--green1); display: inline-block;
+    }
+    h2.section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+    }
+    h2.section-title em { color: var(--green1); font-style: italic; }
+    .section-intro {
+      font-size: 1.15rem;         /* bumped from 1.1rem */
+      color: var(--text1);        /* was text2 — much more readable */
+      max-width: 640px;
+      line-height: 1.85;          /* taller */
+    }
 
-    /* two-col layout */
-    .cols { display: grid; grid-template-columns: 1fr 340px; gap: 48px; align-items: start; }
-    .cols.rev { grid-template-columns: 340px 1fr; }
-    .cols.rev .aside { order: -1; }
+    /* ── CONTENT GRID ───────────────────────────────────────────────── */
+    .content-body {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 48px;
+      align-items: start;
+    }
+    .content-body.reverse { grid-template-columns: 380px 1fr; }
+    .content-body.reverse .sidebar { order: -1; }
 
-    /* prose */
+    /* ─── PROSE: THE BIG READABILITY UPGRADE ─────────────────────── */
     .prose h3 {
-      font-family: 'Instrument Serif', serif;
-      font-size: 1.45rem; font-weight: 400;
-      color: var(--text); margin: 40px 0 14px;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;          /* was 1.5rem */
+      font-weight: 700;
+      margin: 44px 0 16px;       /* more space above headings */
+      color: var(--text0);
+      letter-spacing: -0.01em;
     }
     .prose h3:first-child { margin-top: 0; }
-    .prose p { color: var(--text2); font-size: 1rem; line-height: 1.85; margin-bottom: 18px; }
-    .prose strong { color: var(--text); font-weight: 600; }
-    .prose em { color: var(--gold); }
+    .prose p {
+      color: var(--text1);        /* was text1 (#bbf7d0) — now brighter #d4f5e2 */
+      margin-bottom: 22px;        /* was 18px — more breathing room */
+      font-size: var(--prose-size);  /* 17px */
+      line-height: var(--prose-lh);  /* 1.85 */
+      letter-spacing: var(--prose-ls);
+    }
+    .prose strong {
+      color: var(--green1);
+      font-weight: 600;
+    }
+    .prose em { color: var(--gold); font-style: italic; }
 
-    /* blockquote */
+    /* ── CARDS ──────────────────────────────────────────────────────── */
+    .card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+    }
+    .card:hover {
+      border-color: rgba(74,222,128,0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+    }
+    .card-icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+    }
+    .card h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text0);
+    }
+    .card p {
+      font-size: 0.95rem;         /* was 0.9rem */
+      color: var(--text1);        /* was text2 */
+      line-height: 1.75;          /* was 1.7 */
+    }
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+      margin: 40px 0;
+    }
+    .cards-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 40px 0;
+    }
+
+    /* ── SIDEBAR ────────────────────────────────────────────────────── */
+    .sidebar { display: flex; flex-direction: column; gap: 24px; }
+    .sidebar-widget {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      overflow: hidden;
+      position: relative;
+    }
+    .sidebar-widget::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--green1), var(--teal));
+    }
+    .widget-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;         /* was 0.7rem */
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--green1);
+      margin-bottom: 20px;
+    }
+
+    /* ── STAT BLOCKS ────────────────────────────────────────────────── */
+    .stat-block {
+      display: flex; flex-direction: column;
+      gap: 4px; padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .stat-block:last-child { border-bottom: none; }
+    .stat-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: var(--green1);
+      line-height: 1;
+    }
+    .stat-label {
+      font-size: 0.875rem;        /* was 0.82rem */
+      color: var(--text1);        /* was text2 */
+      line-height: 1.5;
+    }
+
+    /* ── QUOTE ──────────────────────────────────────────────────────── */
     blockquote {
-      border-left: 2px solid var(--green);
-      padding: 18px 24px; margin: 32px 0;
-      background: rgba(92,184,122,0.04);
-      border-radius: 0 10px 10px 0;
+      border-left: 3px solid var(--green1);
+      margin: 36px 0;
+      padding: 22px 30px;
+      background: rgba(74,222,128,0.05);
+      border-radius: 0 var(--radius) var(--radius) 0;
     }
     blockquote p {
-      font-family: 'Instrument Serif', serif;
-      font-size: 1.1rem; font-style: italic;
-      color: var(--text) !important; line-height: 1.6; margin: 0 !important;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;          /* was 1.15rem */
+      font-style: italic;
+      color: var(--text0) !important;
+      line-height: 1.65;
+      margin: 0 !important;
     }
     blockquote cite {
-      display: block; margin-top: 10px;
-      font-size: 0.76rem; font-family: 'DM Mono', monospace;
-      color: var(--green); font-style: normal;
+      display: block;
+      margin-top: 12px;
+      font-size: 0.82rem;
+      color: var(--green1);
+      font-style: normal;
+      font-family: 'DM Mono', monospace;
     }
 
-    /* cause list */
-    .cause-list { display: flex; flex-direction: column; gap: 10px; margin: 24px 0; }
+    /* ── CAUSE LIST ─────────────────────────────────────────────────── */
+    .cause-list {
+      display: flex; flex-direction: column; gap: 16px;
+      margin: 28px 0;
+    }
     .cause-item {
-      display: flex; align-items: flex-start; gap: 14px;
-      padding: 16px 18px; background: var(--bg3);
-      border: 1px solid var(--border); border-radius: var(--radius);
-      transition: border-color 0.2s;
+      display: flex; align-items: flex-start; gap: 16px;
+      padding: 18px 22px;         /* slightly more padding */
+      background: var(--bg2);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
     }
-    .cause-item:hover { border-color: rgba(92,184,122,0.25); }
-    .c-icon { font-size: 1.4rem; flex-shrink: 0; margin-top: 2px; }
-    .c-text h4 { font-weight: 600; font-size: 0.95rem; color: var(--text); margin-bottom: 4px; }
-    .c-text p { font-size: 0.88rem; color: var(--text2); margin: 0 !important; line-height: 1.65; }
-
-    /* cards grid */
-    .cards { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 16px; margin: 24px 0; }
-    .cards-3 { grid-template-columns: repeat(3,1fr); }
-    .card {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 24px;
-      transition: border-color 0.2s, transform 0.2s;
+    .cause-item:hover {
+      border-color: rgba(74,222,128,0.3);
+      background: var(--bg3);
     }
-    .card:hover { border-color: rgba(92,184,122,0.25); transform: translateY(-3px); }
-    .card-ico { font-size: 2rem; margin-bottom: 12px; }
-    .card h4 { font-family: 'Instrument Serif', serif; font-size: 1.1rem; font-weight: 400; color: var(--text); margin-bottom: 8px; }
-    .card p { font-size: 0.88rem; color: var(--text2); line-height: 1.7; }
+    .cause-icon { font-size: 1.6rem; flex-shrink: 0; margin-top: 2px; }
+    .cause-text h4 {
+      font-weight: 600; font-size: 1.05rem; /* was 1rem */
+      color: var(--text0); margin-bottom: 6px; /* was 4px */
+    }
+    .cause-text p {
+      font-size: 0.92rem;         /* was 0.88rem */
+      color: var(--text1);        /* was text2 */
+      margin: 0 !important;
+      line-height: 1.7;
+    }
 
-    /* bio 2x2 */
-    .bio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 24px 0; }
+    /* ── IMPACT TIMELINE ────────────────────────────────────────────── */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+      margin: 32px 0;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute; left: 8px; top: 8px; bottom: 8px;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--green1), transparent);
+    }
+    .tl-item {
+      position: relative; margin-bottom: 28px;
+    }
+    .tl-item::before {
+      content: '';
+      position: absolute; left: -28px; top: 6px;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--green1);
+      box-shadow: 0 0 8px var(--green1);
+    }
+    .tl-item h4 {
+      font-weight: 600; font-size: 1.05rem; /* was 1rem */
+      color: var(--text0); margin-bottom: 8px;
+    }
+    .tl-item p {
+      font-size: 0.93rem;         /* was 0.9rem */
+      color: var(--text1);        /* was text2 */
+      margin: 0 !important;
+      line-height: 1.7;
+    }
+
+    /* ── PROGRESS BAR WIDGET ────────────────────────────────────────── */
+    .progress-item {
+      margin-bottom: 18px;
+    }
+    .progress-header {
+      display: flex; justify-content: space-between;
+      font-size: 0.85rem;         /* was 0.82rem */
+      color: var(--text1);        /* was text2 */
+      margin-bottom: 8px;
+    }
+    .progress-track {
+      height: 6px; background: var(--bg0);
+      border-radius: 999px; overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: 999px;
+      background: linear-gradient(90deg, var(--green3), var(--green1));
+      transition: width 1.5s ease;
+      width: 0;
+    }
+    .progress-fill.red { background: linear-gradient(90deg, #b91c1c, var(--red)); }
+    .progress-fill.gold { background: linear-gradient(90deg, var(--gold2), var(--gold)); }
+    .progress-fill.teal { background: linear-gradient(90deg, #0d9488, var(--teal)); }
+
+    /* ── 5R SECTION ─────────────────────────────────────────────────── */
+    .five-r-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin: 48px 0;
+    }
+    .r-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      cursor: default;
+      transition: all 0.35s ease;
+    }
+    .r-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(74,222,128,0.06), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .r-card:hover::before { opacity: 1; }
+    .r-card:hover {
+      border-color: rgba(74,222,128,0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+    }
+    .r-num {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      font-weight: 900;
+      color: rgba(74,222,128,0.12);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .r-letter {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 900;
+      color: var(--green1);
+      line-height: 1;
+      margin-bottom: 8px;
+      text-shadow: 0 0 20px rgba(74,222,128,0.4);
+    }
+    .r-word {
+      font-weight: 700; font-size: 0.92rem;  /* was 0.9rem */
+      color: var(--text0); margin-bottom: 12px;
+    }
+    .r-tip {
+      font-size: 0.83rem; color: var(--text1);  /* was text2 */
+      line-height: 1.6;
+    }
+    .r-icon { font-size: 2rem; margin-bottom: 10px; }
+
+    /* ── WASTE CHART ────────────────────────────────────────────────── */
+    .waste-chart {
+      margin: 28px 0;
+    }
+    .waste-bar-item {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 16px;
+    }
+    .waste-label {
+      width: 120px; font-size: 0.85rem;     /* was 0.82rem */
+      color: var(--text1); flex-shrink: 0; text-align: right; /* was text2 */
+    }
+    .waste-track {
+      flex: 1; height: 28px;
+      background: var(--bg0);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+    .waste-fill {
+      height: 100%; border-radius: 6px;
+      display: flex; align-items: center;
+      padding-left: 12px;
+      font-size: 0.8rem; font-weight: 600; /* was 0.78rem */
+      color: var(--bg0);
+      transition: width 1.5s ease;
+      width: 0;
+    }
+
+    /* ── BIODIVERSITY ───────────────────────────────────────────────── */
+    .bio-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin: 32px 0;
+    }
     .bio-card {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 24px;
-      transition: border-color 0.2s, transform 0.2s;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: all 0.3s ease;
     }
-    .bio-card:hover { border-color: rgba(92,184,122,0.2); transform: translateY(-2px); }
-    .bio-card .bi { font-size: 1.8rem; margin-bottom: 10px; }
-    .bio-card h4 { font-family: 'Instrument Serif', serif; font-size: 1.05rem; font-weight: 400; color: var(--text); margin-bottom: 8px; }
-    .bio-card p { font-size: 0.88rem; color: var(--text2); line-height: 1.65; }
+    .bio-card:hover {
+      border-color: rgba(74,222,128,0.3);
+      transform: translateY(-3px);
+    }
+    .bio-card .bc-icon { font-size: 2rem; margin-bottom: 12px; }
+    .bio-card h4 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--text0); margin-bottom: 10px;
+    }
+    .bio-card p {
+      font-size: 0.93rem;         /* was 0.88rem */
+      color: var(--text1);        /* was text2 */
+      line-height: 1.72;          /* was 1.65 */
+    }
 
-    /* callout */
+    /* ── CALLOUT ────────────────────────────────────────────────────── */
     .callout {
-      display: flex; gap: 14px; padding: 16px 20px;
-      border-radius: var(--radius); margin: 24px 0;
+      display: flex; gap: 16px;
+      padding: 20px 24px;
+      border-radius: var(--radius);
+      margin: 28px 0;
       border: 1px solid;
     }
-    .callout.warn { background: rgba(224,112,112,0.06); border-color: rgba(224,112,112,0.2); }
-    .callout.info { background: rgba(77,184,160,0.06); border-color: rgba(77,184,160,0.18); }
-    .callout.ok   { background: rgba(92,184,122,0.06); border-color: rgba(92,184,122,0.2); }
-    .callout-ico { font-size: 1.3rem; flex-shrink: 0; margin-top: 2px; }
-    .callout-body h4 { font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
-    .callout.warn h4 { color: var(--red); }
-    .callout.info h4 { color: var(--teal); }
-    .callout.ok   h4 { color: var(--green); }
-    .callout-body p { font-size: 0.88rem; color: var(--text2); margin: 0 !important; line-height: 1.65; }
-
-    /* timeline */
-    .timeline { padding-left: 24px; position: relative; margin: 24px 0; }
-    .timeline::before { content:''; position:absolute; left:5px; top:8px; bottom:8px; width:1px; background:linear-gradient(to bottom,var(--green),transparent); }
-    .tl { position:relative; margin-bottom:22px; }
-    .tl::before { content:''; position:absolute; left:-20px; top:6px; width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green-dim); }
-    .tl h4 { font-weight:600; font-size:0.95rem; color:var(--text); margin-bottom:4px; }
-    .tl p { font-size:0.88rem; color:var(--text2); margin:0 !important; line-height:1.65; }
-
-    /* pills */
-    .pills { display:flex; flex-wrap:wrap; gap:7px; margin:16px 0; }
-    .pill { padding:4px 12px; border-radius:999px; font-size:0.76rem; font-weight:500; background:rgba(92,184,122,0.1); color:var(--green); border:1px solid rgba(92,184,122,0.18); }
-    .pill.teal { background:rgba(77,184,160,0.1); color:var(--teal); border-color:rgba(77,184,160,0.18); }
-    .pill.gold { background:rgba(201,169,110,0.1); color:var(--gold); border-color:rgba(201,169,110,0.18); }
-    .pill.red  { background:rgba(224,112,112,0.1); color:var(--red);  border-color:rgba(224,112,112,0.18); }
-
-    .divider { height:1px; background:linear-gradient(to right,transparent,var(--border),transparent); margin:32px 0; }
-
-    /* ── ASIDE / SIDEBAR ── */
-    .aside { display:flex; flex-direction:column; gap:20px; }
-    .widget {
-      background: var(--bg3); border: 1px solid var(--border);
-      border-radius: var(--radius-lg); padding: 24px; position: relative; overflow: hidden;
+    .callout.warn {
+      background: rgba(248,113,113,0.08);
+      border-color: rgba(248,113,113,0.25);
     }
-    .widget::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--green),var(--teal)); }
-    .wt { font-family:'DM Mono',monospace; font-size:0.68rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--green); margin-bottom:18px; }
-
-    .stat { padding:14px 0; border-bottom:1px solid var(--border); }
-    .stat:last-child { border-bottom:none; padding-bottom:0; }
-    .stat-v { font-family:'Instrument Serif',serif; font-size:2rem; color:var(--green); line-height:1; }
-    .stat-l { font-size:0.83rem; color:var(--text2); margin-top:3px; line-height:1.4; }
-
-    .pbar { margin-bottom:14px; }
-    .pbar:last-child { margin-bottom:0; }
-    .ph { display:flex; justify-content:space-between; font-size:0.8rem; color:var(--text2); margin-bottom:6px; }
-    .pt { height:5px; background:var(--bg); border-radius:999px; overflow:hidden; }
-    .pf { height:100%; border-radius:999px; background:linear-gradient(90deg,var(--green-dim),var(--green)); transition:width 1.4s ease; width:0; }
-    .pf.red  { background:linear-gradient(90deg,#a04040,var(--red)); }
-    .pf.gold { background:linear-gradient(90deg,#8a6030,var(--gold)); }
-    .pf.teal { background:linear-gradient(90deg,#2a7060,var(--teal)); }
-
-    .widget p { font-size:0.88rem; color:var(--text2); line-height:1.7; }
-
-    /* waste bar */
-    .wbar { margin-bottom:12px; }
-    .wbar-row { display:flex; align-items:center; gap:12px; }
-    .wbar-label { width:100px; font-size:0.8rem; color:var(--text2); text-align:right; flex-shrink:0; }
-    .wbar-track { flex:1; height:24px; background:var(--bg); border-radius:6px; overflow:hidden; }
-    .wbar-fill { height:100%; border-radius:6px; display:flex; align-items:center; padding-left:10px; font-size:0.76rem; font-weight:600; color:var(--bg); transition:width 1.4s ease; width:0; }
-
-    /* ── 5R CARDS ── */
-    .r-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:14px; margin-bottom:56px; }
-    .r-wrap { perspective:1000px; height:260px; }
-    .r-inner {
-      position:relative; width:100%; height:100%;
-      transform-style:preserve-3d;
-      transition:transform 0.65s cubic-bezier(0.4,0,0.2,1);
-      cursor:pointer;
+    .callout.info {
+      background: rgba(45,212,191,0.06);
+      border-color: rgba(45,212,191,0.2);
     }
-    .r-wrap:hover .r-inner { transform:rotateY(180deg); }
-    .r-front, .r-back {
-      position:absolute; inset:0;
-      backface-visibility:hidden; -webkit-backface-visibility:hidden;
-      border-radius:var(--radius-lg); border:1px solid var(--border);
-      display:flex; flex-direction:column; align-items:center;
-      justify-content:center; padding:20px 16px; text-align:center;
-      overflow:hidden;
+    .callout.success {
+      background: rgba(74,222,128,0.06);
+      border-color: rgba(74,222,128,0.2);
     }
-    .r-front { background:var(--bg3); }
-    .r-back { background:var(--bg2); border-color:rgba(92,184,122,0.3); transform:rotateY(180deg); gap:10px; }
-    .r-num { font-family:'DM Mono',monospace; font-size:0.68rem; color:var(--muted); letter-spacing:0.12em; margin-bottom:8px; }
-    .r-letter {
-      font-family:'Instrument Serif',serif; font-size:2rem;
-      font-style:italic; color:var(--green); line-height:1; margin-bottom:6px;
+    .callout-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 2px; }
+    .callout-body h4 {
+      font-weight: 600; font-size: 0.98rem; /* was 0.95rem */
+      margin-bottom: 8px;
     }
-    .r-ico { font-size:1.6rem; margin-bottom:8px; }
-    .r-word { font-size:0.82rem; font-weight:600; color:var(--text2); }
-    .r-hint { font-size:0.62rem; font-family:'DM Mono',monospace; color:var(--muted); letter-spacing:0.1em; text-transform:uppercase; margin-top:10px; animation:hpulse 2.5s ease-in-out infinite; }
-    @keyframes hpulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
-    .r-back-word { font-family:'Instrument Serif',serif; font-size:1.1rem; font-style:italic; color:var(--green); }
-    .r-back-ico { font-size:1.6rem; }
-    .r-tip { font-size:0.84rem; color:var(--text); line-height:1.6; }
-
-    /* ── CONCLUSION ── */
-    #conclusion { padding:96px 0 0; background:var(--bg2); }
-    .conc-inner { text-align:center; max-width:680px; margin:0 auto 64px; }
-    .conc-inner h2 { margin-bottom:24px; }
-    .conc-inner p { font-size:1rem; color:var(--text2); line-height:1.85; margin-bottom:16px; }
-    .conc-inner .hi { color:var(--green); font-weight:600; font-size:1.05rem; }
-
-    /* footer */
-    footer { border-top:1px solid var(--border); padding:48px 32px 56px; max-width:var(--max); margin:0 auto; }
-    .ft-grid { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:48px; }
-    .ft-brand { font-family:'Instrument Serif',serif; font-size:1.15rem; color:var(--text); display:flex; align-items:center; gap:8px; margin-bottom:12px; }
-    .ft-brand .leaf { color:var(--green); }
-    .ft-about { font-size:0.88rem; color:var(--text3); line-height:1.7; }
-    footer h5 { font-size:0.68rem; font-family:'DM Mono',monospace; letter-spacing:0.14em; text-transform:uppercase; color:var(--green); margin-bottom:14px; }
-    footer ul { list-style:none; }
-    footer li { font-size:0.85rem; color:var(--text2); margin-bottom:8px; padding-left:12px; position:relative; }
-    footer li::before { content:'›'; position:absolute; left:0; color:var(--green-dim); }
-    .ft-bottom { margin-top:40px; padding-top:20px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; font-size:0.78rem; color:var(--muted); }
-
-    /* back to top */
-    #btt {
-      position:fixed; bottom:28px; right:28px; z-index:500;
-      width:42px; height:42px; border-radius:50%;
-      background:var(--bg3); border:1px solid var(--border);
-      color:var(--text2); font-size:1rem; cursor:pointer;
-      display:none; align-items:center; justify-content:center;
-      transition:all 0.25s; box-shadow:0 4px 16px rgba(0,0,0,0.4);
+    .callout.warn .callout-body h4 { color: var(--red); }
+    .callout.info .callout-body h4 { color: var(--teal); }
+    .callout.success .callout-body h4 { color: var(--green1); }
+    .callout-body p {
+      font-size: 0.92rem;         /* was 0.88rem */
+      color: var(--text1);        /* was text2 */
+      margin: 0 !important;
+      line-height: 1.7;
     }
-    #btt.vis { display:flex; }
-    #btt:hover { border-color:var(--green); color:var(--green); transform:translateY(-2px); }
 
-    /* reveal */
-    .rev { opacity:0; transform:translateY(24px); transition:opacity 0.65s ease,transform 0.65s ease; }
-    .rev.in { opacity:1; transform:translateY(0); }
-    .d1{transition-delay:0.08s} .d2{transition-delay:0.16s} .d3{transition-delay:0.24s} .d4{transition-delay:0.32s}
-
-    /* read time */
-    .rtime { font-family:'DM Mono',monospace; font-size:0.72rem; color:var(--muted); margin-top:8px; display:flex; align-items:center; gap:5px; }
-
-    /* ── RESPONSIVE ── */
-    @media(max-width:960px){
-      .nav-links{display:none;}
-      #ham{display:flex;}
-      .cols,.cols.rev{grid-template-columns:1fr;}
-      .cols.rev .aside{order:0;}
-      .r-grid{grid-template-columns:repeat(2,1fr);}
-      .ft-grid{grid-template-columns:1fr;}
-      .bio-grid{grid-template-columns:1fr 1fr;}
-      .cards-3{grid-template-columns:1fr 1fr;}
+    /* ── PILL TAGS ──────────────────────────────────────────────────── */
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0; }
+    .pill {
+      display: inline-block;
+      padding: 4px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;          /* was 0.78rem */
+      font-weight: 500;
+      background: rgba(74,222,128,0.1);
+      color: var(--green1);
+      border: 1px solid rgba(74,222,128,0.2);
     }
-    @media(max-width:600px){
-      nav{padding:0 16px;}
-      .wrap{padding:0 16px;}
-      .section{padding:64px 0;}
-      h1{font-size:2.4rem;}
-      .r-grid{grid-template-columns:1fr 1fr;}
-      .r-wrap{height:240px;}
-      .bio-grid{grid-template-columns:1fr;}
-      .cards-3{grid-template-columns:1fr;}
-      footer{padding:40px 16px 48px;}
-      .ft-bottom{flex-direction:column;gap:10px;text-align:center;}
-      #topics .t-tab{min-width:100px;padding:12px 14px;}
+    .pill.teal { background: rgba(45,212,191,0.1); color: var(--teal); border-color: rgba(45,212,191,0.2); }
+    .pill.gold { background: rgba(212,169,106,0.1); color: var(--gold); border-color: rgba(212,169,106,0.2); }
+    .pill.red  { background: rgba(248,113,113,0.1); color: var(--red);  border-color: rgba(248,113,113,0.2); }
+
+    /* ── DIVIDER ────────────────────────────────────────────────────── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+      margin: 40px 0;
     }
-    @media(max-width:420px){
-      .r-grid{grid-template-columns:1fr;}
+
+    /* ── CONCLUSION / FOOTER ────────────────────────────────────────── */
+    #conclusion {
+      position: relative; z-index: 1;
+      padding: 100px 0 60px;
+      background: var(--bg1);
+      border-top: 1px solid var(--border);
+    }
+    .conclusion-inner {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 60px;
+    }
+    .conclusion-inner h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 900;
+      line-height: 1.15;
+      margin-bottom: 28px;
+    }
+    .conclusion-inner p {
+      font-size: 1.07rem;         /* was 1.05rem */
+      color: var(--text1);        /* was text2 */
+      line-height: 1.9;           /* was 1.8 */
+      margin-bottom: 20px;
+    }
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 48px 60px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 48px;
+    }
+    .footer-brand p {
+      font-size: 0.92rem;         /* was 0.9rem */
+      color: var(--muted);
+      margin-top: 12px;
+      line-height: 1.7;           /* was 1.6 */
+    }
+    footer h4 {
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green1);
+      font-family: 'DM Mono', monospace;
+      margin-bottom: 16px;
+    }
+    footer ul { list-style: none; }
+    footer ul li {
+      font-size: 0.88rem;         /* was 0.85rem */
+      color: var(--text1);        /* was text2 */
+      margin-bottom: 10px;        /* was 8px */
+      padding-left: 12px;
+      position: relative;
+      line-height: 1.5;
+    }
+    footer ul li::before {
+      content: '›';
+      position: absolute; left: 0;
+      color: var(--green3);
+    }
+    .footer-bottom {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 0.82rem;         /* was 0.8rem */
+      color: var(--muted);
+    }
+    .footer-bottom span { color: var(--green1); }
+
+    /* ── BACK TO TOP ────────────────────────────────────────────────── */
+    #back-top {
+      position: fixed; bottom: 32px; right: 32px; z-index: 500;
+      width: 48px; height: 48px;
+      background: var(--green1);
+      color: var(--bg0);
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      display: none;
+      align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      box-shadow: 0 4px 20px rgba(74,222,128,0.4);
+      transition: all 0.3s ease;
+    }
+    #back-top.visible { display: flex; }
+    #back-top:hover { transform: translateY(-4px); box-shadow: 0 8px 30px rgba(74,222,128,0.5); }
+
+    /* ── REVEAL ANIMATION ───────────────────────────────────────────── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav { padding: 14px 24px; }
+      nav.scrolled { padding: 10px 24px; }
+      .nav-links { display: none; }
+      #hamburger { display: flex; }
+      .container { padding: 0 24px; }
+      .content-body,
+      .content-body.reverse { grid-template-columns: 1fr; }
+      .content-body.reverse .sidebar { order: 0; }
+      .five-r-grid { grid-template-columns: repeat(2, 1fr); }
+      .cards-grid-3 { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .section-header { flex-direction: column; gap: 8px; }
+      .section-num { font-size: 3rem; }
+    }
+    @media (max-width: 600px) {
+      .five-r-grid { grid-template-columns: 1fr; }
+      .cards-grid-3 { grid-template-columns: 1fr; }
+      .bio-grid { grid-template-columns: 1fr; }
+      footer { padding: 32px 24px 48px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+    }
+
+    /* ══════════════════════════════════════════════════════════════════
+       ENHANCED FEATURES
+    ══════════════════════════════════════════════════════════════════ */
+
+    /* ── PRELOADER ──────────────────────────────────────────────────── */
+    #preloader {
+      position: fixed; inset: 0; z-index: 99999;
+      background: var(--bg0);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 28px;
+      transition: opacity 0.7s ease, visibility 0.7s ease;
+    }
+    #preloader.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+    .pre-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem; font-weight: 900;
+      color: var(--text0); letter-spacing: 0.05em;
+      opacity: 0; animation: preLogoIn 0.6s 0.5s ease forwards;
+    }
+    .pre-logo em { color: var(--green1); font-style: italic; }
+    .pre-ring {
+      width: 64px; height: 64px;
+      border: 2px solid rgba(74,222,128,0.15);
+      border-top-color: var(--green1);
+      border-radius: 50%;
+      animation: preRingSpin 1s linear infinite;
+    }
+    .pre-bar-wrap {
+      width: 200px; height: 2px;
+      background: rgba(74,222,128,0.1);
+      border-radius: 999px; overflow: hidden;
+      opacity: 0; animation: preLogoIn 0.5s 0.7s ease forwards;
+    }
+    .pre-bar-fill {
+      height: 100%; width: 0;
+      background: linear-gradient(90deg, var(--green3), var(--green1));
+      border-radius: 999px;
+      animation: preBarLoad 1.8s 0.8s ease forwards;
+    }
+    .pre-pct {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem; color: var(--muted);
+      letter-spacing: 0.1em;
+      opacity: 0; animation: preLogoIn 0.5s 0.7s ease forwards;
+    }
+    @keyframes preRingSpin { to { transform: rotate(360deg); } }
+    @keyframes preLogoIn { to { opacity: 1; } }
+    @keyframes preBarLoad { to { width: 100%; } }
+
+    /* ── CUSTOM CURSOR ──────────────────────────────────────────────── */
+    @media (pointer: fine) {
+      body { cursor: none; }
+      a, button, .r-card-wrapper, .topic-tab, .card, .btn { cursor: none; }
+    }
+    #cursor-dot {
+      position: fixed; z-index: 99998; pointer-events: none;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--green1);
+      transform: translate(-50%, -50%);
+      transition: width 0.2s, height 0.2s, background 0.2s;
+      box-shadow: 0 0 10px rgba(74,222,128,0.8);
+    }
+    #cursor-ring {
+      position: fixed; z-index: 99997; pointer-events: none;
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1.5px solid rgba(74,222,128,0.5);
+      transform: translate(-50%, -50%);
+      transition: width 0.35s ease, height 0.35s ease, border-color 0.35s ease, opacity 0.35s ease;
+    }
+    body.cursor-hover #cursor-dot { width: 12px; height: 12px; background: var(--teal); }
+    body.cursor-hover #cursor-ring { width: 52px; height: 52px; border-color: rgba(45,212,191,0.6); }
+
+    /* ── SIDE SECTION DOTS ──────────────────────────────────────────── */
+    #side-dots {
+      position: fixed; right: 24px; top: 50%;
+      transform: translateY(-50%);
+      z-index: 900;
+      display: flex; flex-direction: column; gap: 14px;
+    }
+    .side-dot {
+      position: relative;
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: rgba(74,222,128,0.2);
+      border: 1.5px solid rgba(74,222,128,0.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .side-dot::before {
+      content: attr(data-label);
+      position: absolute; right: 20px;
+      font-size: 0.72rem; font-weight: 600;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.08em;
+      color: var(--green1);
+      white-space: nowrap;
+      background: rgba(5,13,7,0.9);
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      opacity: 0;
+      transform: translateX(4px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+    .side-dot:hover::before { opacity: 1; transform: translateX(0); }
+    .side-dot.active {
+      background: var(--green1);
+      border-color: var(--green1);
+      box-shadow: 0 0 12px rgba(74,222,128,0.6);
+      transform: scale(1.3);
+    }
+    @media (max-width: 900px) { #side-dots { display: none; } }
+
+    /* ── TOAST NOTIFICATION ─────────────────────────────────────────── */
+    #toast-container {
+      position: fixed; bottom: 28px; left: 28px;
+      z-index: 9000; display: flex; flex-direction: column;
+      gap: 10px; pointer-events: none;
+    }
+    .toast {
+      display: inline-flex; align-items: center; gap: 10px;
+      background: rgba(13,28,15,0.95);
+      border: 1px solid rgba(74,222,128,0.3);
+      border-radius: 999px;
+      padding: 10px 20px;
+      font-size: 0.85rem; font-weight: 500;  /* was 0.82rem */
+      color: var(--text0);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { font-size: 1rem; }
+    .toast-label { color: var(--green1); font-weight: 700; }
+
+    /* ── 5R FLIP CARDS ──────────────────────────────────────────────── */
+    .r-card-wrapper {
+      perspective: 1000px;
+      min-height: 280px;
+    }
+    .r-card-inner {
+      position: relative; width: 100%; height: 280px;
+      transform-style: preserve-3d;
+      transition: transform 0.7s cubic-bezier(0.4,0,0.2,1);
+      cursor: pointer;
+    }
+    .r-card-wrapper:hover .r-card-inner { transform: rotateY(180deg); }
+    .r-card-front, .r-card-back {
+      position: absolute; inset: 0;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 24px 18px;
+      text-align: center;
+    }
+    .r-card-front {
+      background: var(--bg2);
+      overflow: hidden;
+    }
+    .r-card-front::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(74,222,128,0.04), transparent 60%);
+    }
+    .r-card-front::after {
+      content: '';
+      position: absolute; bottom: -20px; right: -20px;
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(74,222,128,0.08), transparent 70%);
+    }
+    .r-card-back {
+      background: linear-gradient(135deg, var(--bg3), var(--bg2));
+      border-color: rgba(74,222,128,0.35);
+      transform: rotateY(180deg);
+      box-shadow: 0 0 40px rgba(74,222,128,0.1) inset;
+      gap: 10px;
+    }
+    .r-card-back .r-tip {
+      font-size: 0.9rem;          /* was 0.88rem */
+      color: var(--text0);        /* was text1 — max contrast on card back */
+      line-height: 1.7;
+      margin: 0;
+    }
+    .r-card-back .r-word {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.15rem; font-weight: 700;
+      color: var(--green1);
+      margin-bottom: 6px;
+    }
+    .r-card-back .r-icon-back { font-size: 2rem; margin-bottom: 4px; }
+    .flip-hint {
+      font-size: 0.68rem; color: var(--muted);
+      letter-spacing: 0.12em; text-transform: uppercase;
+      font-family: 'DM Mono', monospace;
+      margin-top: 8px;
+      animation: hintPulse 2s infinite;
+    }
+    @keyframes hintPulse {
+      0%, 100% { opacity: 0.4; } 50% { opacity: 0.9; }
+    }
+
+    /* ── ANIMATED AMBIENT BLOBS ─────────────────────────────────────── */
+    .ambient-blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(70px); pointer-events: none;
+      z-index: 0; opacity: 0.6;
+      animation: blobFloat 12s ease-in-out infinite alternate;
+    }
+    .ambient-blob.b1 {
+      width: 400px; height: 300px;
+      background: radial-gradient(ellipse, rgba(74,222,128,0.07), transparent 70%);
+      top: 10%; left: -5%;
+      animation-delay: 0s;
+    }
+    .ambient-blob.b2 {
+      width: 350px; height: 350px;
+      background: radial-gradient(ellipse, rgba(45,212,191,0.06), transparent 70%);
+      bottom: 5%; right: -5%;
+      animation-delay: -4s;
+    }
+    .ambient-blob.b3 {
+      width: 300px; height: 250px;
+      background: radial-gradient(ellipse, rgba(212,169,106,0.05), transparent 70%);
+      top: 50%; left: 40%;
+      animation-delay: -8s;
+    }
+    @keyframes blobFloat {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(30px, -20px) scale(1.08); }
+    }
+
+    /* ── SECTION GLOW BORDER ────────────────────────────────────────── */
+    .section::after {
+      content: '';
+      position: absolute; top: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 200px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--green1), transparent);
+      opacity: 0.5;
+    }
+
+    /* ── MAGNETIC BUTTON ────────────────────────────────────────────── */
+    .btn { position: relative; overflow: hidden; }
+    .btn::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: rgba(255,255,255,0.05);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      border-radius: inherit;
+    }
+    .btn:hover::after { opacity: 1; }
+
+    /* ── TYPEWRITER CURSOR ──────────────────────────────────────────── */
+    .typewriter-cursor {
+      display: inline-block;
+      width: 2px; height: 1.1em;
+      background: var(--green1);
+      margin-left: 2px;
+      vertical-align: middle;
+      animation: cursorBlink 0.9s step-end infinite;
+    }
+    @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* ── FLOATING SECTION ICON ──────────────────────────────────────── */
+    .section-float-icon {
+      position: absolute; right: 48px; top: 80px;
+      font-size: 8rem; opacity: 0.04;
+      pointer-events: none; user-select: none;
+      z-index: 0;
+      animation: iconFloat 6s ease-in-out infinite alternate;
+    }
+    @keyframes iconFloat {
+      from { transform: translateY(0) rotate(-5deg); }
+      to   { transform: translateY(-16px) rotate(5deg); }
+    }
+
+    /* ── ENHANCED CARD GLOW ─────────────────────────────────────────── */
+    .card {
+      position: relative; overflow: hidden;
+    }
+    .card::after {
+      content: '';
+      position: absolute; top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(74,222,128,0.04), transparent);
+      transition: left 0.6s ease;
+    }
+    .card:hover::after { left: 150%; }
+
+    /* ── READING TIME BADGE ─────────────────────────────────────────── */
+    .read-time {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.75rem; font-family: 'DM Mono', monospace;  /* was 0.72rem */
+      color: var(--muted); letter-spacing: 0.08em;
+      margin-top: 10px;
+    }
+    .read-time::before { content: '⏱'; font-size: 0.8rem; }
+
+    /* ── SIDEBAR PROSE TEXT ─────────────────────────────────────────── */
+    /* Targets inline paragraph styles in sidebar widgets */
+    .sidebar-widget p[style] {
+      font-size: 0.92rem !important;   /* was 0.88rem / 0.85rem */
+      color: var(--text1) !important;  /* ensure readable, not dim text2 */
+      line-height: 1.72 !important;
     }
   </style>
 </head>
 <body>
 
-<div id="rp"></div>
+<!-- PRELOADER -->
+<div id="preloader">
+  <div class="pre-ring"></div>
+  <div class="pre-logo">🌿 <em>Digital</em> Green Journal</div>
+  <div class="pre-bar-wrap"><div class="pre-bar-fill"></div></div>
+  <div class="pre-pct">Loading environment...</div>
+</div>
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+
+<!-- SIDE SECTION DOTS -->
+<div id="side-dots">
+  <div class="side-dot" data-target="global-warming" data-label="Global Warming"></div>
+  <div class="side-dot" data-target="climate-change" data-label="Climate Change"></div>
+  <div class="side-dot" data-target="biodiversity" data-label="Biodiversity Loss"></div>
+  <div class="side-dot" data-target="waste-mgmt" data-label="Waste Management"></div>
+  <div class="side-dot" data-target="five-r" data-label="The 5R's"></div>
+  <div class="side-dot" data-target="conclusion" data-label="Conclusion"></div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar"></div>
 
 <!-- NAV -->
-<nav id="nav">
-  <a href="#hero" class="nav-brand"><span class="leaf">🌿</span> Digital Green Journal</a>
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">🌿 <span>Digital Green Journal</span></a>
   <ul class="nav-links">
-    <li><a href="#global-warming">Warming</a></li>
-    <li><a href="#climate-change">Climate</a></li>
+    <li><a href="#global-warming">Global Warming</a></li>
+    <li><a href="#climate-change">Climate Change</a></li>
     <li><a href="#biodiversity">Biodiversity</a></li>
-    <li><a href="#waste-mgmt">Waste</a></li>
+    <li><a href="#waste-mgmt">Waste Mgmt.</a></li>
     <li><a href="#five-r">5R's</a></li>
-    <li><a href="#conclusion">Conclusion</a></li>
+    <li><a href="#conclusion" class="active">Conclusion</a></li>
   </ul>
-  <button id="ham" aria-label="Menu"><span></span><span></span><span></span></button>
+  <button id="hamburger" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- MOBILE MENU -->
-<div id="mob">
-  <button id="mob-close">✕</button>
-  <a href="#global-warming" class="ml">🌡 Global Warming</a>
-  <a href="#climate-change" class="ml">🌪 Climate Change</a>
-  <a href="#biodiversity" class="ml">🦋 Biodiversity</a>
-  <a href="#waste-mgmt" class="ml">♻️ Waste</a>
-  <a href="#five-r" class="ml">🔁 The 5R's</a>
-  <a href="#conclusion" class="ml">🌿 Conclusion</a>
+<div id="mobile-menu">
+  <button id="close-menu">✕</button>
+  <a href="#global-warming" class="mob-link">🌡 Global Warming</a>
+  <a href="#climate-change" class="mob-link">🌪 Climate Change</a>
+  <a href="#biodiversity" class="mob-link">🦋 Biodiversity Loss</a>
+  <a href="#waste-mgmt" class="mob-link">♻️ Waste Management</a>
+  <a href="#five-r" class="mob-link">🔁 The 5R's</a>
+  <a href="#conclusion" class="mob-link">🌿 Conclusion</a>
 </div>
 
 <!-- HERO -->
 <section id="hero">
-  <div class="hero-bg"></div>
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-glow g1"></div>
+  <div class="hero-glow g2"></div>
   <div class="hero-content">
-    <div class="hero-eyebrow"><div class="dot-pulse"></div>Environmental Awareness Blog</div>
-    <h1>The <em>Digital</em><br>Green Journal</h1>
-    <p class="hero-sub">Understanding the environmental challenges threatening our planet and the Philippines — and what we can do about it.</p>
-    <div class="hero-btns">
+    <div class="hero-tag">Environmental Awareness Blog</div>
+    <h1 class="hero-title">The <em>Digital</em><br>Green Journal</h1>
+    <p class="hero-desc" id="hero-desc"></p>
+    <div class="hero-cta">
       <a href="#global-warming" class="btn btn-primary">Start Reading ↓</a>
-      <a href="#conclusion" class="btn btn-ghost">Jump to Conclusion</a>
+      <a href="#conclusion" class="btn btn-outline">Jump to Conclusion</a>
     </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="scroll-line"></div>
   </div>
 </section>
 
-<!-- TOPICS STRIP -->
-<nav id="topics">
-  <a href="#global-warming" class="t-tab" data-sec="global-warming">
+<!-- TOPICS NAV STRIP -->
+<div id="topics-nav">
+  <a href="#global-warming" class="topic-tab">
     <div class="t-icon">🌡️</div>
-    <div class="t-code">01</div>
-    <div class="t-name">Global Warming</div>
+    <div class="t-num">TOPIC 01</div>
+    <div class="t-label">Global Warming</div>
   </a>
-  <a href="#climate-change" class="t-tab" data-sec="climate-change">
+  <a href="#climate-change" class="topic-tab">
     <div class="t-icon">🌪️</div>
-    <div class="t-code">02</div>
-    <div class="t-name">Climate Change</div>
+    <div class="t-num">TOPIC 02</div>
+    <div class="t-label">Climate Change</div>
   </a>
-  <a href="#biodiversity" class="t-tab" data-sec="biodiversity">
+  <a href="#biodiversity" class="topic-tab">
     <div class="t-icon">🦋</div>
-    <div class="t-code">03</div>
-    <div class="t-name">Biodiversity</div>
+    <div class="t-num">TOPIC 03</div>
+    <div class="t-label">Biodiversity Loss</div>
   </a>
-  <a href="#waste-mgmt" class="t-tab" data-sec="waste-mgmt">
+  <a href="#waste-mgmt" class="topic-tab">
     <div class="t-icon">♻️</div>
-    <div class="t-code">04</div>
-    <div class="t-name">Waste Mgmt.</div>
+    <div class="t-num">TOPIC 04</div>
+    <div class="t-label">Waste Management</div>
   </a>
-  <a href="#five-r" class="t-tab" data-sec="five-r">
+  <a href="#five-r" class="topic-tab">
     <div class="t-icon">🔁</div>
-    <div class="t-code">05</div>
-    <div class="t-name">The 5R's</div>
+    <div class="t-num">TOPIC 05</div>
+    <div class="t-label">The 5R's</div>
   </a>
-</nav>
+</div>
 
-<!-- ═══════════════════════════════════════════════════ -->
+<!-- ───────────────────────────────────────────────────────────────── -->
 <!-- SECTION 1 — GLOBAL WARMING -->
-<!-- ═══════════════════════════════════════════════════ -->
+<!-- ───────────────────────────────────────────────────────────────── -->
 <section class="section" id="global-warming">
-  <div class="wrap">
-    <div class="sec-hd rev">
-      <div class="sec-num">TOPIC 01 / 05</div>
-      <div class="sec-label">The Science Behind the Heat</div>
-      <h2>The Causes of <em>Global Warming</em></h2>
-      <p class="sec-intro">Global warming is the long-term rise in Earth's average surface temperature caused primarily by human activities. Understanding its root causes is the first step toward meaningful action.</p>
-      <div class="rtime">⏱ 5 min read</div>
+  <div class="ambient-blob b1"></div>
+  <div class="ambient-blob b2"></div>
+  <div class="section-float-icon">🌡️</div>
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-num">01</div>
+      <div class="section-title-group">
+        <div class="section-tag">The Science Behind the Heat</div>
+        <h2 class="section-title">The Causes of <em>Global Warming</em></h2>
+        <p class="section-intro">Global warming is the long-term rise in Earth's average surface temperature caused primarily by human activities. Understanding its root causes is the first step toward meaningful action.</p>
+        <div class="read-time">5 min read</div>
+      </div>
     </div>
 
-    <div class="cols">
+    <div class="content-body">
       <div class="prose">
         <h3>What is Global Warming?</h3>
-        <p>Global warming refers to the gradual increase in the overall temperature of Earth's atmosphere, primarily due to increased levels of CO₂, methane, and other greenhouse gases. These gases trap heat from the sun — a phenomenon known as the <strong>greenhouse effect</strong>.</p>
-        <p>Since the late 19th century, Earth's average surface temperature has risen by approximately <strong>1.1°C</strong> — and continues to climb due to human industrial activity.</p>
+        <p>Global warming refers to the gradual increase in the overall temperature of Earth's atmosphere, primarily due to the increased levels of carbon dioxide (CO₂), methane (CH₄), and other greenhouse gases (GHGs). These gases trap heat from the sun, preventing it from escaping back into space — a phenomenon known as the <strong>greenhouse effect</strong>.</p>
+        <p>While the greenhouse effect is natural and necessary for life, human activities have drastically intensified it, causing temperatures to rise at an alarming rate. Since the late 19th century, the Earth's average surface temperature has risen by approximately <strong>1.1°C</strong> — and continues to climb.</p>
 
         <blockquote>
           <p>"We are the first generation to feel the effect of climate change and the last generation that can do something about it."</p>
-          <cite>— Barack Obama, UN Climate Summit, 2014</cite>
+          <cite>— Barack Obama, United Nations Climate Summit, 2014</cite>
         </blockquote>
 
         <h3>Major Human Causes</h3>
         <div class="cause-list">
-          <div class="cause-item"><div class="c-icon">🏭</div><div class="c-text"><h4>Burning of Fossil Fuels</h4><p>Coal, oil, and natural gas combustion accounts for over <strong>75% of global GHG emissions</strong>, releasing massive CO₂ directly into the atmosphere.</p></div></div>
-          <div class="cause-item"><div class="c-icon">🌳</div><div class="c-text"><h4>Deforestation</h4><p>Forests act as carbon sinks. Globally, <strong>10 million hectares</strong> of forest are lost each year, releasing stored carbon.</p></div></div>
-          <div class="cause-item"><div class="c-icon">🐄</div><div class="c-text"><h4>Agriculture & Livestock</h4><p>Cattle farming produces <strong>methane</strong> through digestion. Rice paddies and fertilizers release nitrous oxide (N₂O).</p></div></div>
-          <div class="cause-item"><div class="c-icon">🏗️</div><div class="c-text"><h4>Industrial Processes</h4><p>Cement, iron, steel, and chemical industries contribute roughly <strong>21% of global emissions</strong>.</p></div></div>
-          <div class="cause-item"><div class="c-icon">🗑️</div><div class="c-text"><h4>Waste & Landfills</h4><p>Decomposing organic waste generates <strong>methane</strong> — 80 times more potent than CO₂ over 20 years.</p></div></div>
-          <div class="cause-item"><div class="c-icon">❄️</div><div class="c-text"><h4>Refrigerants & F-Gases</h4><p>Fluorinated gases trap thousands of times more heat than CO₂, with enormous <strong>global warming potential</strong>.</p></div></div>
+          <div class="cause-item">
+            <div class="cause-icon">🏭</div>
+            <div class="cause-text">
+              <h4>Burning of Fossil Fuels</h4>
+              <p>Coal, oil, and natural gas combustion for electricity, transportation, and manufacturing accounts for over <strong>75% of global GHG emissions</strong>. This releases massive amounts of CO₂ directly into the atmosphere.</p>
+            </div>
+          </div>
+          <div class="cause-item">
+            <div class="cause-icon">🌳</div>
+            <div class="cause-text">
+              <h4>Deforestation</h4>
+              <p>Forests act as carbon sinks, absorbing CO₂. When trees are cut or burned — especially in tropical regions like the Philippines — they release stored carbon. Globally, <strong>10 million hectares</strong> of forest are lost each year.</p>
+            </div>
+          </div>
+          <div class="cause-item">
+            <div class="cause-icon">🐄</div>
+            <div class="cause-text">
+              <h4>Agriculture & Livestock</h4>
+              <p>Livestock farming — particularly cattle — produces <strong>methane</strong> through digestion. Rice paddies and the use of nitrogen fertilizers also release potent greenhouse gases like nitrous oxide (N₂O).</p>
+            </div>
+          </div>
+          <div class="cause-item">
+            <div class="cause-icon">🏗️</div>
+            <div class="cause-text">
+              <h4>Industrial Processes</h4>
+              <p>Cement production, iron and steel manufacturing, and chemical industries emit large quantities of CO₂ and other GHGs. Industrial sources contribute roughly <strong>21% of global emissions</strong>.</p>
+            </div>
+          </div>
+          <div class="cause-item">
+            <div class="cause-icon">🗑️</div>
+            <div class="cause-text">
+              <h4>Waste & Landfills</h4>
+              <p>Decomposing organic waste in landfills generates <strong>methane</strong>, a greenhouse gas 80 times more potent than CO₂ over a 20-year period. Improper waste management worsens the problem significantly.</p>
+            </div>
+          </div>
+          <div class="cause-item">
+            <div class="cause-icon">❄️</div>
+            <div class="cause-text">
+              <h4>Refrigerants & F-Gases</h4>
+              <p>Fluorinated gases (HFCs, PFCs, SF₆) used in refrigeration, air conditioning, and electronics can trap thousands of times more heat than CO₂. Though present in small quantities, they have an enormous <strong>global warming potential</strong>.</p>
+            </div>
+          </div>
         </div>
 
         <div class="callout warn">
-          <div class="callout-ico">⚠️</div>
-          <div class="callout-body"><h4>Philippines at Risk</h4><p>Despite contributing less than 1% of global GHG emissions, the Philippines faces disproportionate impacts — stronger typhoons, rising sea levels, and prolonged droughts.</p></div>
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-body">
+            <h4>Philippines at Risk</h4>
+            <p>As a tropical archipelago, the Philippines is one of the world's most climate-vulnerable nations. Despite contributing less than 1% of global GHG emissions, it faces disproportionately severe impacts including stronger typhoons, rising sea levels, and prolonged droughts.</p>
+          </div>
         </div>
 
         <h3>Natural vs. Human Contribution</h3>
-        <p>Scientific consensus backed by NASA and IPCC confirms that <strong>human activities are responsible for over 95%</strong> of warming observed since the mid-20th century. The speed of current warming far exceeds any natural cycle.</p>
+        <p>It is important to note that natural factors — such as volcanic activity, solar cycles, and ocean circulation — do contribute to climate variability. However, scientific consensus, backed by organizations such as NASA and IPCC, confirms that <strong>human activities are responsible for over 95%</strong> of the warming observed since the mid-20th century. The speed of current warming far exceeds anything seen in natural cycles over thousands of years.</p>
 
         <div class="divider"></div>
         <div class="pills">
@@ -568,174 +1441,183 @@
         </div>
       </div>
 
-      <div class="aside">
-        <div class="widget rev d1">
-          <div class="wt">📊 Key Numbers</div>
-          <div class="stat"><div class="stat-v">1.1°C</div><div class="stat-l">Rise in global average temp. since 1880</div></div>
-          <div class="stat"><div class="stat-v">37B</div><div class="stat-l">Tonnes of CO₂ emitted globally per year</div></div>
-          <div class="stat"><div class="stat-v">2030</div><div class="stat-l">Deadline to limit warming to 1.5°C (IPCC)</div></div>
-          <div class="stat"><div class="stat-v">75%</div><div class="stat-l">of global GHG emissions from fossil fuels</div></div>
+      <div class="sidebar">
+        <div class="sidebar-widget reveal reveal-delay-1">
+          <div class="widget-title">📊 Key Numbers</div>
+          <div class="stat-block">
+            <div class="stat-value">1.1°C</div>
+            <div class="stat-label">Rise in global average temp. since 1880</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">37B</div>
+            <div class="stat-label">Tonnes of CO₂ emitted globally per year</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">2030</div>
+            <div class="stat-label">Deadline to limit warming to 1.5°C (IPCC)</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">75%</div>
+            <div class="stat-label">of global GHG emissions from fossil fuels</div>
+          </div>
         </div>
 
-        <div class="widget rev d2">
-          <div class="wt">🌡 Top Emitting Sectors</div>
-          <div class="pbar"><div class="ph"><span>Energy & Power</span><span>34%</span></div><div class="pt"><div class="pf red" data-w="34"></div></div></div>
-          <div class="pbar"><div class="ph"><span>Transportation</span><span>16%</span></div><div class="pt"><div class="pf gold" data-w="16"></div></div></div>
-          <div class="pbar"><div class="ph"><span>Agriculture</span><span>11%</span></div><div class="pt"><div class="pf" data-w="11"></div></div></div>
-          <div class="pbar"><div class="ph"><span>Industry</span><span>21%</span></div><div class="pt"><div class="pf teal" data-w="21"></div></div></div>
-          <div class="pbar"><div class="ph"><span>Buildings</span><span>6%</span></div><div class="pt"><div class="pf" data-w="6"></div></div></div>
+        <div class="sidebar-widget reveal reveal-delay-2">
+          <div class="widget-title">🌡 Top Emitting Sectors</div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Energy & Power</span><span>34%</span></div>
+            <div class="progress-track"><div class="progress-fill red" data-width="34"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Transportation</span><span>16%</span></div>
+            <div class="progress-track"><div class="progress-fill gold" data-width="16"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Agriculture</span><span>11%</span></div>
+            <div class="progress-track"><div class="progress-fill" data-width="11"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Industry</span><span>21%</span></div>
+            <div class="progress-track"><div class="progress-fill teal" data-width="21"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Buildings</span><span>6%</span></div>
+            <div class="progress-track"><div class="progress-fill" data-width="6"></div></div>
+          </div>
         </div>
 
-        <div class="widget rev d3">
-          <div class="wt">🇵🇭 Philippine Context</div>
-          <p>The Philippines ratified the <strong style="color:var(--green)">Paris Agreement</strong> in 2017, committing to reduce GHG emissions by <strong style="color:var(--green)">75% by 2030</strong> — 72.29% conditional on international support.</p>
+        <div class="sidebar-widget reveal reveal-delay-3">
+          <div class="widget-title">🇵🇭 Philippine Context</div>
+          <p style="font-size:0.92rem;color:var(--text1);line-height:1.72;">
+            The Philippines ratified the <strong style="color:var(--green1)">Paris Agreement</strong> in 2017, committing to reduce GHG emissions by <strong style="color:var(--green1)">75% by 2030</strong> compared to a business-as-usual scenario — 72.29% of which is conditional on international support.
+          </p>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════ -->
+<!-- ───────────────────────────────────────────────────────────────── -->
 <!-- SECTION 2 — CLIMATE CHANGE -->
-<!-- ═══════════════════════════════════════════════════ -->
+<!-- ───────────────────────────────────────────────────────────────── -->
 <section class="section" id="climate-change">
-  <div class="wrap">
-    <div class="sec-hd rev">
-      <div class="sec-num">TOPIC 02 / 05</div>
-      <div class="sec-label">A World Transformed</div>
-      <h2>Climate Change & <em>Its Impact</em></h2>
-      <p class="sec-intro">Climate change is the long-term alteration of global temperature and weather patterns. The speed and severity of current changes are unprecedented — and the effects are already being felt.</p>
-      <div class="rtime">⏱ 6 min read</div>
+  <div class="ambient-blob b1" style="background:radial-gradient(ellipse,rgba(45,212,191,0.07),transparent 70%);top:20%;right:-5%;left:auto"></div>
+  <div class="ambient-blob b3" style="background:radial-gradient(ellipse,rgba(74,222,128,0.05),transparent 70%)"></div>
+  <div class="section-float-icon">🌪️</div>
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-num">02</div>
+      <div class="section-title-group">
+        <div class="section-tag">A World Transformed</div>
+        <h2 class="section-title">Climate Change & <em>Its Impact</em></h2>
+        <p class="section-intro">Climate change is the long-term alteration of global temperature and weather patterns. While some natural changes are expected, the speed and severity of current changes are unprecedented — and the effects are already being felt worldwide.</p>
+        <div class="read-time">6 min read</div>
+      </div>
     </div>
 
-    <div class="cols rev">
-      <div class="aside">
-        <div class="widget rev d1">
-          <div class="wt">🌊 Sea Level Rise</div>
-          <div class="stat"><div class="stat-v">3.7mm</div><div class="stat-l">Average sea level rise per year globally</div></div>
-          <div class="stat"><div class="stat-v">0.5m+</div><div class="stat-l">Projected rise by 2100 if unaddressed</div></div>
-          <div class="stat"><div class="stat-v">800M</div><div class="stat-l">People threatened by coastal flooding</div></div>
+    <div class="content-body reverse">
+      <div class="sidebar">
+        <div class="sidebar-widget reveal reveal-delay-1">
+          <div class="widget-title">🌊 Sea Level Rise</div>
+          <div class="stat-block">
+            <div class="stat-value">3.7mm</div>
+            <div class="stat-label">Average sea level rise per year globally</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">0.5m+</div>
+            <div class="stat-label">Projected rise by 2100 if unaddressed</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">800M</div>
+            <div class="stat-label">People threatened by coastal flooding</div>
+          </div>
         </div>
 
-        <div class="widget rev d2">
-          <div class="wt">🇵🇭 Philippines Vulnerability</div>
-          <div class="pbar"><div class="ph"><span>Typhoon intensity</span><span>↑ 40%</span></div><div class="pt"><div class="pf red" data-w="40"></div></div></div>
-          <div class="pbar"><div class="ph"><span>Coral bleaching</span><span>↑ 60%</span></div><div class="pt"><div class="pf gold" data-w="60"></div></div></div>
-          <div class="pbar"><div class="ph"><span>Drought frequency</span><span>↑ 35%</span></div><div class="pt"><div class="pf teal" data-w="35"></div></div></div>
-          <div class="pbar"><div class="ph"><span>Food insecurity risk</span><span>↑ 50%</span></div><div class="pt"><div class="pf red" data-w="50"></div></div></div>
+        <div class="sidebar-widget reveal reveal-delay-2">
+          <div class="widget-title">🇵🇭 Philippines is Vulnerable</div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Typhoon intensity</span><span>↑ 40%</span></div>
+            <div class="progress-track"><div class="progress-fill red" data-width="40"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Coral bleaching</span><span>↑ 60%</span></div>
+            <div class="progress-track"><div class="progress-fill gold" data-width="60"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Drought frequency</span><span>↑ 35%</span></div>
+            <div class="progress-track"><div class="progress-fill teal" data-width="35"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Food insecurity risk</span><span>↑ 50%</span></div>
+            <div class="progress-track"><div class="progress-fill red" data-width="50"></div></div>
+          </div>
         </div>
 
-        <div class="widget rev d3">
-          <div class="wt">📅 Key Climate Events (PH)</div>
+        <div class="sidebar-widget reveal reveal-delay-3">
+          <div class="widget-title">📅 Key Climate Events (PH)</div>
           <div class="timeline" style="margin:0">
-            <div class="tl"><h4>Typhoon Yolanda (2013)</h4><p>One of the strongest typhoons ever, killing over 6,000 Filipinos. Linked to warming ocean temperatures.</p></div>
-            <div class="tl"><h4>El Niño 2015–16</h4><p>Severe drought damaged agriculture in Mindanao, affecting millions of farmers.</p></div>
-            <div class="tl"><h4>2022 Flooding Crisis</h4><p>Record-breaking monsoon floods displaced over 700,000 people nationwide.</p></div>
+            <div class="tl-item">
+              <h4>Typhoon Yolanda (2013)</h4>
+              <p>One of the strongest typhoons ever recorded, killing over 6,000 Filipinos. Linked to warming ocean temperatures.</p>
+            </div>
+            <div class="tl-item">
+              <h4>El Niño 2015–16</h4>
+              <p>Severe drought damaged agriculture in Mindanao, affecting millions of farmers.</p>
+            </div>
+            <div class="tl-item">
+              <h4>2022 Flooding Crisis</h4>
+              <p>Record-breaking monsoon floods displaced over 700,000 people nationwide.</p>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="prose">
         <h3>Understanding Climate Change</h3>
-        <p>Climate change refers to broad shifts in global and regional climate patterns including temperature, precipitation, wind patterns, and seasons — attributed largely to human-induced greenhouse gas emissions.</p>
-        <p>The <strong>IPCC</strong> states that evidence for human-caused climate change is now "<strong>unequivocal</strong>." Without urgent action, we are on track for a 2.5–4°C rise by end of century.</p>
+        <p>Climate change refers to broad shifts in global and regional climate patterns — including temperature, precipitation, wind patterns, and seasons — attributed largely to human-induced greenhouse gas emissions. It is not just about it getting "hotter"; it disrupts the entire climate system, creating unpredictable and extreme weather events worldwide.</p>
+        <p>The <strong>Intergovernmental Panel on Climate Change (IPCC)</strong> states that the evidence for human-caused climate change is now "<strong>unequivocal</strong>." Without urgent action, we are on track for a 2.5–4°C rise by the end of the century — with catastrophic consequences for ecosystems, food systems, and human civilization.</p>
 
         <h3>Global Impacts</h3>
         <div class="bio-grid">
-          <div class="bio-card"><div class="bi">🌊</div><h4>Rising Sea Levels</h4><p>Melting polar ice caps are causing sea levels to rise, threatening coastal cities. Manila Bay has been rising faster than the global average.</p></div>
-          <div class="bio-card"><div class="bi">🔥</div><h4>Extreme Heat Waves</h4><p>More frequent heat waves are causing heat-related illnesses, stressing energy grids and endangering vulnerable populations.</p></div>
-          <div class="bio-card"><div class="bi">🌧️</div><h4>Erratic Rainfall</h4><p>Some regions face prolonged droughts while others experience devastating floods, disrupting agriculture and water supply.</p></div>
-          <div class="bio-card"><div class="bi">🐟</div><h4>Ocean Acidification</h4><p>As oceans absorb more CO₂, they become more acidic — threatening coral reefs and fishing communities in the Philippines.</p></div>
+          <div class="bio-card">
+            <div class="bc-icon">🌊</div>
+            <h4>Rising Sea Levels</h4>
+            <p>Melting polar ice caps and glaciers are causing sea levels to rise, threatening low-lying coastal cities and island nations. Manila Bay has been rising faster than the global average.</p>
+          </div>
+          <div class="bio-card">
+            <div class="bc-icon">🔥</div>
+            <h4>Extreme Heat Waves</h4>
+            <p>More frequent and intense heat waves are causing heat-related illnesses and deaths, stressing energy grids and endangering outdoor workers and elderly populations.</p>
+          </div>
+          <div class="bio-card">
+            <div class="bc-icon">🌧️</div>
+            <h4>Erratic Rainfall</h4>
+            <p>Some regions experience prolonged droughts while others face devastating floods. This unpredictability disrupts agriculture, water supply, and human settlements.</p>
+          </div>
+          <div class="bio-card">
+            <div class="bc-icon">🐟</div>
+            <h4>Ocean Acidification</h4>
+            <p>As oceans absorb more CO₂, they become more acidic — threatening marine ecosystems, coral reefs, and the fishing communities that depend on them, especially in the Philippines.</p>
+          </div>
         </div>
 
         <h3>Impact on the Philippines</h3>
-        <p>The Philippines ranks among the top five countries most affected by climate change per the <strong>Global Climate Risk Index</strong>. With over 7,600 islands and a 36,000 km coastline, the country is extremely exposed to rising seas and intensifying typhoons.</p>
-        <p>Filipino farmers and fishermen face increasing vulnerability. Crop failures, saltwater intrusion, and reduced fish stocks directly threaten national food security.</p>
+        <p>The Philippines ranks among the top five countries most affected by climate change, according to the <strong>Global Climate Risk Index</strong>. With over 7,600 islands and a coastline of more than 36,000 km, the country is extremely exposed to rising seas, storm surges, and intensifying typhoons.</p>
+        <p>Filipino farmers and fishermen — the backbone of food production — are increasingly vulnerable to climate disruptions. Crop failures, saltwater intrusion into farmland, and warmer ocean temperatures reducing fish stocks are all direct consequences threatening national food security and rural livelihoods.</p>
 
         <blockquote>
           <p>"Climate change is no longer a distant threat — it is happening here, it is happening now, and the Filipino people are among its most affected."</p>
           <cite>— PAGASA, Philippine Atmospheric, Geophysical and Astronomical Services Administration</cite>
         </blockquote>
 
+        <h3>What Can Be Done?</h3>
+        <p>Addressing climate change requires action on two fronts: <strong>mitigation</strong> (reducing emissions) and <strong>adaptation</strong> (adjusting to current and future climate impacts). The Philippines, through PAGASA, DENR, and various local government units, is investing in early warning systems, mangrove restoration, climate-resilient agriculture, and disaster risk reduction strategies.</p>
+
         <div class="callout info">
-          <div class="callout-ico">💡</div>
-          <div class="callout-body"><h4>The Role of Youth</h4><p>Young Filipinos are at the forefront of climate advocacy — from community cleanups to lobbying for stronger climate policies across the country.</p></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════════════ -->
-<!-- SECTION 3 — BIODIVERSITY -->
-<!-- ═══════════════════════════════════════════════════ -->
-<section class="section" id="biodiversity">
-  <div class="wrap">
-    <div class="sec-hd rev">
-      <div class="sec-num">TOPIC 03 / 05</div>
-      <div class="sec-label">Life's Web Unraveling</div>
-      <h2>The Effect of <em>Biodiversity Loss</em></h2>
-      <p class="sec-intro">Biodiversity is the foundation of healthy ecosystems and human wellbeing. Its rapid decline poses one of the gravest threats to life as we know it.</p>
-      <div class="rtime">⏱ 6 min read</div>
-    </div>
-
-    <div class="cols">
-      <div class="prose">
-        <h3>What is Biodiversity?</h3>
-        <p>Biodiversity encompasses the variety of life at all levels: <strong>species diversity</strong>, <strong>genetic diversity</strong>, and <strong>ecosystem diversity</strong>. We are currently losing species at a rate <strong>1,000 times faster</strong> than the natural background — an event scientists call the <em>Sixth Mass Extinction</em>.</p>
-
-        <h3>Major Drivers of Biodiversity Loss</h3>
-        <div class="cards rev">
-          <div class="card d1"><div class="card-ico">🌾</div><h4>Habitat Destruction</h4><p>Conversion of forests and wetlands is the #1 driver. About <strong>50% of Earth's habitable land</strong> is now used for agriculture.</p></div>
-          <div class="card d2"><div class="card-ico">🔥</div><h4>Climate Change</h4><p>Rising temperatures push species beyond tolerance limits, disrupting breeding, migration, and food availability.</p></div>
-          <div class="card d3"><div class="card-ico">☠️</div><h4>Overexploitation</h4><p>Overfishing, illegal wildlife trade, and unsustainable hunting collapse populations. The global wildlife trade is worth over <strong>$23 billion</strong> annually.</p></div>
-          <div class="card d1"><div class="card-ico">🦠</div><h4>Invasive Species</h4><p>Non-native species outcompete or prey on native species, disrupting ecological balance.</p></div>
-          <div class="card d2"><div class="card-ico">🧪</div><h4>Pollution</h4><p>Pesticides, heavy metals, and plastic waste contaminate soil, water, and air — poisoning species and degrading habitats.</p></div>
-          <div class="card d3"><div class="card-ico">🏙️</div><h4>Urbanization</h4><p>Urban sprawl fragments natural habitats. Cities now cover over <strong>3% of Earth's land area</strong>, with growth accelerating.</p></div>
-        </div>
-
-        <h3>Consequences</h3>
-        <div class="timeline">
-          <div class="tl"><h4>Collapse of Ecosystem Services</h4><p>Pollination, water purification, flood control, and climate regulation all depend on healthy ecosystems.</p></div>
-          <div class="tl"><h4>Food Security Threats</h4><p>Over 75% of global food crops depend on animal pollination. The decline of bees and butterflies directly threatens food production.</p></div>
-          <div class="tl"><h4>Loss of Medicinal Resources</h4><p>25–50% of pharmaceutical drugs are derived from natural organisms. The Philippines' rich flora is a critical resource at risk.</p></div>
-          <div class="tl"><h4>Increased Disease Transmission</h4><p>Reduced biodiversity allows disease vectors like mosquitoes and rodents to proliferate, increasing dengue and leptospirosis risks.</p></div>
-        </div>
-
-        <blockquote>
-          <p>"We are eroding the very foundations of our economies, livelihoods, food security, health, and quality of life worldwide."</p>
-          <cite>— IPBES Global Assessment Report, 2019</cite>
-        </blockquote>
-
-        <div class="callout warn">
-          <div class="callout-ico">🦅</div>
-          <div class="callout-body"><h4>The Philippine Eagle: A Symbol at Risk</h4><p>The Philippine Eagle is critically endangered, with fewer than 800 individuals remaining in the wild — mirroring the broader devastation of Philippine biodiversity.</p></div>
-        </div>
-      </div>
-
-      <div class="aside">
-        <div class="widget rev d1">
-          <div class="wt">🌍 Extinction Crisis</div>
-          <div class="stat"><div class="stat-v">1M+</div><div class="stat-l">Species facing extinction globally (IPBES)</div></div>
-          <div class="stat"><div class="stat-v">68%</div><div class="stat-l">Decline in global wildlife since 1970</div></div>
-          <div class="stat"><div class="stat-v">1,000×</div><div class="stat-l">Current extinction rate vs. natural background</div></div>
-        </div>
-
-        <div class="widget rev d2">
-          <div class="wt">🇵🇭 Mega-Biodiversity Nation</div>
-          <p style="margin-bottom:14px;">The Philippines is one of 17 <strong style="color:var(--green)">megadiverse countries</strong> — hosting over 52,000 described species, 67% found nowhere else on Earth.</p>
-          <div class="pbar"><div class="ph"><span>Mammals (endemic)</span><span>67%</span></div><div class="pt"><div class="pf" data-w="67"></div></div></div>
-          <div class="pbar"><div class="ph"><span>Birds (endemic)</span><span>44%</span></div><div class="pt"><div class="pf teal" data-w="44"></div></div></div>
-          <div class="pbar"><div class="ph"><span>Reptiles (endemic)</span><span>65%</span></div><div class="pt"><div class="pf gold" data-w="65"></div></div></div>
-          <div class="pbar"><div class="ph"><span>Plants (endemic)</span><span>39%</span></div><div class="pt"><div class="pf" data-w="39"></div></div></div>
-        </div>
-
-        <div class="widget rev d3">
-          <div class="wt">⚡ Quick Facts</div>
-          <div class="cause-list" style="gap:8px">
-            <div class="cause-item" style="padding:12px 14px"><div class="c-icon" style="font-size:1.2rem">🐝</div><div class="c-text"><p>Bees pollinate 1/3 of all food consumed by humans. Their global decline is alarming.</p></div></div>
-            <div class="cause-item" style="padding:12px 14px"><div class="c-icon" style="font-size:1.2rem">🌊</div><div class="c-text"><p>50% of coral reefs lost since 1950. Philippines has lost 70% of its coral cover.</p></div></div>
-            <div class="cause-item" style="padding:12px 14px"><div class="c-icon" style="font-size:1.2rem">🌳</div><div class="c-text"><p>Philippine forest cover dropped from 70% (1900) to just 24% (2020).</p></div></div>
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">
+            <h4>The Role of Youth</h4>
+            <p>Young Filipinos are increasingly at the forefront of climate advocacy — from local community cleanups to lobbying for stronger climate policies. Student organizations like Kabataan para sa Kalikasan are driving awareness and action across the country.</p>
           </div>
         </div>
       </div>
@@ -743,219 +1625,520 @@
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════ -->
-<!-- SECTION 4 — WASTE MANAGEMENT -->
-<!-- ═══════════════════════════════════════════════════ -->
-<section class="section" id="waste-mgmt">
-  <div class="wrap">
-    <div class="sec-hd rev">
-      <div class="sec-num">TOPIC 04 / 05</div>
-      <div class="sec-label">The Local Crisis</div>
-      <h2>Philippine <em>Waste Management</em></h2>
-      <p class="sec-intro">The Philippines generates millions of tonnes of solid waste every year, yet its waste management infrastructure remains deeply inadequate. The crisis demands urgent systemic change.</p>
-      <div class="rtime">⏱ 7 min read</div>
+<!-- ───────────────────────────────────────────────────────────────── -->
+<!-- SECTION 3 — BIODIVERSITY LOSS -->
+<!-- ───────────────────────────────────────────────────────────────── -->
+<section class="section" id="biodiversity">
+  <div class="ambient-blob b1" style="background:radial-gradient(ellipse,rgba(212,169,106,0.06),transparent 70%)"></div>
+  <div class="ambient-blob b2" style="background:radial-gradient(ellipse,rgba(74,222,128,0.07),transparent 70%)"></div>
+  <div class="section-float-icon">🦋</div>
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-num">03</div>
+      <div class="section-title-group">
+        <div class="section-tag">Life's Web Unraveling</div>
+        <h2 class="section-title">The Effect of <em>Biodiversity Loss</em></h2>
+        <p class="section-intro">Biodiversity — the variety of life on Earth — is the foundation of healthy ecosystems and human wellbeing. Its rapid decline poses one of the gravest threats to life as we know it.</p>
+        <div class="read-time">6 min read</div>
+      </div>
     </div>
 
-    <div class="cols rev">
-      <div class="aside">
-        <div class="widget rev d1">
-          <div class="wt">🗑️ Waste Statistics (PH)</div>
-          <div class="stat"><div class="stat-v">40,000+</div><div class="stat-l">Tonnes of solid waste generated daily</div></div>
-          <div class="stat"><div class="stat-v">2,500+</div><div class="stat-l">Open or controlled dumpsites still operating</div></div>
-          <div class="stat"><div class="stat-v">3rd</div><div class="stat-l">PH rank as ocean plastic polluter globally</div></div>
-          <div class="stat"><div class="stat-v">≤10%</div><div class="stat-l">Recycling rate of Philippine solid waste</div></div>
+    <div class="content-body">
+      <div class="prose">
+        <h3>What is Biodiversity?</h3>
+        <p>Biodiversity encompasses the variety of life on Earth across all levels: <strong>species diversity</strong> (the number of different species), <strong>genetic diversity</strong> (variety within species), and <strong>ecosystem diversity</strong> (the range of habitats and ecological processes). Together, they form the web of life that supports all living things — including humans.</p>
+        <p>Scientists estimate there are between 8 and 10 million species on Earth. Yet we are currently losing species at a rate <strong>1,000 times faster</strong> than the natural background extinction rate — an event many scientists now call the <em>Sixth Mass Extinction</em>.</p>
+
+        <h3>Major Drivers of Biodiversity Loss</h3>
+        <div class="cards-grid">
+          <div class="card reveal reveal-delay-1">
+            <div class="card-icon">🌾</div>
+            <h4>Habitat Destruction</h4>
+            <p>Conversion of forests, wetlands, and grasslands into agricultural and urban land is the #1 driver of biodiversity loss. About <strong>50% of Earth's habitable land</strong> is now used for agriculture.</p>
+          </div>
+          <div class="card reveal reveal-delay-2">
+            <div class="card-icon">🔥</div>
+            <h4>Climate Change</h4>
+            <p>Rising temperatures and shifting weather patterns push species beyond their tolerance limits, disrupting breeding, migration, and food availability.</p>
+          </div>
+          <div class="card reveal reveal-delay-3">
+            <div class="card-icon">☠️</div>
+            <h4>Overexploitation</h4>
+            <p>Overfishing, illegal wildlife trade, and unsustainable hunting drive populations of many species to collapse. The global wildlife trade is worth over <strong>$23 billion</strong> annually.</p>
+          </div>
+          <div class="card reveal reveal-delay-1">
+            <div class="card-icon">🦠</div>
+            <h4>Invasive Species</h4>
+            <p>Non-native species introduced to new environments outcompete or prey on native species, disrupting ecological balance and threatening endemics.</p>
+          </div>
+          <div class="card reveal reveal-delay-2">
+            <div class="card-icon">🧪</div>
+            <h4>Pollution</h4>
+            <p>Pesticides, heavy metals, plastic waste, and oil spills contaminate soil, water, and air — poisoning species and degrading critical habitats like coral reefs and wetlands.</p>
+          </div>
+          <div class="card reveal reveal-delay-3">
+            <div class="card-icon">🏙️</div>
+            <h4>Urbanization</h4>
+            <p>Urban sprawl fragments natural habitats, creating barriers to species movement and survival. Cities now cover over <strong>3% of Earth's land area</strong>, with growth accelerating.</p>
+          </div>
         </div>
 
-        <div class="widget rev d2">
-          <div class="wt">🏘️ Waste by Category</div>
-          <div class="wbar"><div class="wbar-row"><div class="wbar-label">Biodegradable</div><div class="wbar-track"><div class="wbar-fill" style="background:linear-gradient(90deg,var(--green-dim),var(--green))" data-w="52">52%</div></div></div></div>
-          <div class="wbar"><div class="wbar-row"><div class="wbar-label">Recyclable</div><div class="wbar-track"><div class="wbar-fill" style="background:linear-gradient(90deg,#2a7060,var(--teal))" data-w="28">28%</div></div></div></div>
-          <div class="wbar"><div class="wbar-row"><div class="wbar-label">Residual</div><div class="wbar-track"><div class="wbar-fill" style="background:linear-gradient(90deg,#8a6030,var(--gold))" data-w="18">18%</div></div></div></div>
-          <div class="wbar"><div class="wbar-row"><div class="wbar-label">Special</div><div class="wbar-track"><div class="wbar-fill" style="background:linear-gradient(90deg,#a04040,var(--red))" data-w="2">2%</div></div></div></div>
+        <h3>Consequences of Biodiversity Loss</h3>
+        <p>The loss of biodiversity is not merely an ecological tragedy — it has profound and direct consequences for human society. Every species in an ecosystem plays a role, and when one disappears, it sets off a cascade of effects:</p>
+        <div class="timeline">
+          <div class="tl-item">
+            <h4>Collapse of Ecosystem Services</h4>
+            <p>Pollination, water purification, soil fertility, flood control, and climate regulation all depend on healthy, diverse ecosystems. Biodiversity loss weakens these services that we rely on for survival.</p>
+          </div>
+          <div class="tl-item">
+            <h4>Food Security Threats</h4>
+            <p>Over 75% of global food crops depend on animal pollination. The global decline of bees, butterflies, and other pollinators directly threatens food production worldwide, including in the Philippines.</p>
+          </div>
+          <div class="tl-item">
+            <h4>Loss of Medicinal Resources</h4>
+            <p>About 25–50% of pharmaceutical drugs are derived from natural organisms. As species disappear, so do potential cures for diseases we haven't yet encountered. The Philippines' rich flora is a critical resource at risk.</p>
+          </div>
+          <div class="tl-item">
+            <h4>Increased Disease Transmission</h4>
+            <p>Biodiverse ecosystems act as buffers, regulating disease transmission. When biodiversity decreases, disease vectors like mosquitoes and rodents proliferate, increasing risks of outbreaks like dengue and leptospirosis.</p>
+          </div>
         </div>
 
-        <div class="widget rev d3">
-          <div class="wt">⚖️ Republic Act 9003</div>
-          <p>The <strong style="color:var(--green)">Ecological Solid Waste Management Act of 2000</strong> mandates LGUs to establish MRFs, phase out open dumpsites, and implement source segregation. Enforcement remains a major challenge.</p>
+        <blockquote>
+          <p>"We are eroding the very foundations of our economies, livelihoods, food security, health, and quality of life worldwide."</p>
+          <cite>— IPBES Global Assessment Report on Biodiversity and Ecosystem Services, 2019</cite>
+        </blockquote>
+
+        <div class="callout warn">
+          <div class="callout-icon">🦅</div>
+          <div class="callout-body">
+            <h4>The Philippine Eagle: A Symbol at Risk</h4>
+            <p>The Philippine Eagle — the national bird and one of the world's largest and most powerful eagles — is critically endangered, with fewer than 800 individuals remaining in the wild. Its decline mirrors the broader devastation of Philippine biodiversity driven by deforestation and habitat loss.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar">
+        <div class="sidebar-widget reveal reveal-delay-1">
+          <div class="widget-title">🌍 Extinction Crisis</div>
+          <div class="stat-block">
+            <div class="stat-value">1M+</div>
+            <div class="stat-label">Species facing extinction globally (IPBES)</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">68%</div>
+            <div class="stat-label">Decline in global wildlife populations since 1970</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">1,000x</div>
+            <div class="stat-label">Current extinction rate vs. natural background</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">50%</div>
+            <div class="stat-label">of Earth's habitable land used for agriculture</div>
+          </div>
+        </div>
+
+        <div class="sidebar-widget reveal reveal-delay-2">
+          <div class="widget-title">🇵🇭 Mega-Biodiversity Nation</div>
+          <p style="font-size:0.92rem;color:var(--text1);line-height:1.72;margin-bottom:14px;">
+            The Philippines is one of the world's 17 <strong style="color:var(--green1)">megadiverse countries</strong> — hosting over 52,000 described species, 67% of which are found nowhere else on Earth.
+          </p>
+          <div class="progress-item">
+            <div class="progress-header"><span>Mammals (endemic)</span><span>67%</span></div>
+            <div class="progress-track"><div class="progress-fill" data-width="67"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Birds (endemic)</span><span>44%</span></div>
+            <div class="progress-track"><div class="progress-fill teal" data-width="44"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Reptiles (endemic)</span><span>65%</span></div>
+            <div class="progress-track"><div class="progress-fill gold" data-width="65"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>Plants (endemic)</span><span>39%</span></div>
+            <div class="progress-track"><div class="progress-fill" data-width="39"></div></div>
+          </div>
+        </div>
+
+        <div class="sidebar-widget reveal reveal-delay-3">
+          <div class="widget-title">⚡ Quick Facts</div>
+          <div class="cause-list" style="gap:10px">
+            <div class="cause-item" style="padding:12px 14px">
+              <div class="cause-icon" style="font-size:1.2rem">🐝</div>
+              <div class="cause-text">
+                <p>Bees pollinate 1/3 of all food consumed by humans. Their global decline is alarming.</p>
+              </div>
+            </div>
+            <div class="cause-item" style="padding:12px 14px">
+              <div class="cause-icon" style="font-size:1.2rem">🌊</div>
+              <div class="cause-text">
+                <p>50% of coral reefs have been lost since 1950. Philippines has lost 70% of its coral cover.</p>
+              </div>
+            </div>
+            <div class="cause-item" style="padding:12px 14px">
+              <div class="cause-icon" style="font-size:1.2rem">🌳</div>
+              <div class="cause-text">
+                <p>Philippine forest cover dropped from 70% (1900) to just 24% (2020).</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ───────────────────────────────────────────────────────────────── -->
+<!-- SECTION 4 — PHILIPPINE WASTE MANAGEMENT -->
+<!-- ───────────────────────────────────────────────────────────────── -->
+<section class="section" id="waste-mgmt">
+  <div class="ambient-blob b3" style="background:radial-gradient(ellipse,rgba(45,212,191,0.06),transparent 70%);top:15%;right:10%"></div>
+  <div class="ambient-blob b1" style="background:radial-gradient(ellipse,rgba(74,222,128,0.05),transparent 70%);bottom:10%;left:5%"></div>
+  <div class="section-float-icon">♻️</div>
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-num">04</div>
+      <div class="section-title-group">
+        <div class="section-tag">The Local Crisis</div>
+        <h2 class="section-title">Philippine <em>Waste Management</em></h2>
+        <p class="section-intro">The Philippines generates millions of tonnes of solid waste every year, yet its waste management infrastructure remains deeply inadequate. From open dumpsites to ocean plastic, the crisis demands urgent systemic change.</p>
+        <div class="read-time">7 min read</div>
+      </div>
+    </div>
+
+    <div class="content-body reverse">
+      <div class="sidebar">
+        <div class="sidebar-widget reveal reveal-delay-1">
+          <div class="widget-title">🗑️ Waste Statistics (PH)</div>
+          <div class="stat-block">
+            <div class="stat-value">40,000+</div>
+            <div class="stat-label">Tonnes of solid waste generated daily in the Philippines</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">2,500+</div>
+            <div class="stat-label">Open or controlled dumpsites still operating</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">3rd</div>
+            <div class="stat-label">Philippines' rank as ocean plastic polluter globally</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">≤10%</div>
+            <div class="stat-label">Recycling rate of Philippine solid waste</div>
+          </div>
+        </div>
+
+        <div class="sidebar-widget reveal reveal-delay-2">
+          <div class="widget-title">🏘️ Waste by Category</div>
+          <div class="waste-chart">
+            <div class="waste-bar-item">
+              <div class="waste-label">Biodegradable</div>
+              <div class="waste-track">
+                <div class="waste-fill" style="background: linear-gradient(90deg,#16a34a,#4ade80);" data-width="52">52%</div>
+              </div>
+            </div>
+            <div class="waste-bar-item">
+              <div class="waste-label">Recyclable</div>
+              <div class="waste-track">
+                <div class="waste-fill" style="background: linear-gradient(90deg,#0d9488,#2dd4bf);" data-width="28">28%</div>
+              </div>
+            </div>
+            <div class="waste-bar-item">
+              <div class="waste-label">Residual</div>
+              <div class="waste-track">
+                <div class="waste-fill" style="background: linear-gradient(90deg,#a3855c,#d4a96a);" data-width="18">18%</div>
+              </div>
+            </div>
+            <div class="waste-bar-item">
+              <div class="waste-label">Special</div>
+              <div class="waste-track">
+                <div class="waste-fill" style="background: linear-gradient(90deg,#b91c1c,#f87171);" data-width="2">2%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-widget reveal reveal-delay-3">
+          <div class="widget-title">⚖️ Republic Act 9003</div>
+          <p style="font-size:0.92rem;color:var(--text1);line-height:1.72;">
+            The <strong style="color:var(--green1)">Ecological Solid Waste Management Act of 2000</strong> mandates LGUs to establish Materials Recovery Facilities (MRFs), phase out open dumpsites, and implement segregation at source. Enforcement remains a major challenge.
+          </p>
         </div>
       </div>
 
       <div class="prose">
         <h3>The Scale of the Problem</h3>
-        <p>The Philippines generates over <strong>40,000 tonnes of solid waste daily</strong>. Metro Manila alone accounts for about 9,000 tonnes per day. Open dumpsites, illegal dumping, and waterways clogged with garbage are common across the country.</p>
-        <p>Improper disposal leads to <strong>contaminated water sources, health hazards, flooding, and significant greenhouse gas emissions</strong> as organic waste decomposes anaerobically in open dumps.</p>
+        <p>The Philippines generates over <strong>40,000 tonnes of solid waste daily</strong>, and this figure continues to grow with urbanization and population growth. Metro Manila alone accounts for about 9,000 tonnes per day — yet its waste infrastructure is severely strained. Open dumpsites, illegal dumping, and waterways clogged with garbage are common sights across the country.</p>
+        <p>The problem goes beyond aesthetics. Improper waste disposal leads to <strong>contaminated water sources, health hazards, flooding, and significant greenhouse gas emissions</strong> as organic waste decomposes anaerobically in open dumps producing methane.</p>
 
-        <h3>The Philippine Legal Framework</h3>
-        <p>The Philippines enacted <strong>Republic Act 9003</strong> — the Ecological Solid Waste Management Act of 2000 — mandating closure of open dumpsites, source segregation into biodegradable, recyclable, and residual categories, and directing LGUs to set up Material Recovery Facilities (MRFs).</p>
-        <p>Implementation has been inconsistent. Many LGUs lack funds and technical capacity to comply. The <strong>National Solid Waste Management Commission (NSWMC)</strong> continues to push for reform.</p>
+        <h3>Philippine Legal Framework</h3>
+        <p>The Philippines enacted <strong>Republic Act 9003</strong>, or the Ecological Solid Waste Management Act of 2000, which was considered a landmark law at the time. It mandated the closure of all open dumpsites, required source segregation of waste into biodegradable, recyclable, and residual categories, and directed Local Government Units (LGUs) to set up Material Recovery Facilities (MRFs).</p>
+        <p>However, implementation has been inconsistent. Many LGUs lack the funds and technical capacity to comply. Over 2,500 open and controlled dumpsites remain operational across the country, many in violation of the law. The <strong>National Solid Waste Management Commission (NSWMC)</strong> continues to push for reform and compliance.</p>
 
         <h3>Plastic Pollution & Ocean Impact</h3>
-        <p>The Philippines ranked as the <strong>third largest contributor to ocean plastic pollution</strong> globally. Sachets — small single-use plastic packets — are particularly problematic because they cannot be recycled and easily enter waterways.</p>
-        <p>Pasig River in Metro Manila was once considered among the most polluted rivers in the world, carrying massive plastic volumes into Manila Bay and the ocean. Root-cause solutions including extended producer responsibility are urgently needed.</p>
+        <p>The Philippines ranked as the <strong>third largest contributor to ocean plastic pollution</strong> globally according to a 2015 Ocean Conservancy report. Sachets — small single-use plastic packets for condiments, shampoo, and other products — are particularly problematic because they cannot be recycled and easily find their way into waterways.</p>
+        <p>Pasig River in Metro Manila was once considered among the most polluted rivers in the world, carrying tremendous volumes of plastic waste into Manila Bay and ultimately the ocean. Large-scale cleanup efforts have improved conditions, but root-cause solutions — including extended producer responsibility and plastic reduction policies — are still urgently needed.</p>
 
-        <div class="callout ok">
-          <div class="callout-ico">✅</div>
-          <div class="callout-body"><h4>Extended Producer Responsibility Act (2022)</h4><p>Republic Act 11898 requires companies producing plastic packaging to develop EPR programs to recover and divert plastic waste — a major step toward corporate accountability.</p></div>
+        <div class="callout success">
+          <div class="callout-icon">✅</div>
+          <div class="callout-body">
+            <h4>Extended Producer Responsibility Act (2022)</h4>
+            <p>Republic Act 11898 requires companies producing plastic packaging to develop and implement EPR programs to recover and divert plastic waste from the environment. This is a major step toward holding corporations accountable for the waste they generate.</p>
+          </div>
         </div>
 
         <h3>Community-Level Solutions</h3>
-        <div class="cards">
-          <div class="card"><div class="card-ico">🔄</div><h4>Materials Recovery Facilities</h4><p>MRFs sort, process, and recover recyclable and compostable materials before residual waste reaches landfills.</p></div>
-          <div class="card"><div class="card-ico">🌱</div><h4>Composting Programs</h4><p>Converting organic waste into compost reduces landfill burden and produces valuable soil amendment for community gardens.</p></div>
-          <div class="card"><div class="card-ico">🏫</div><h4>School Waste Programs</h4><p>School-based segregation and eco-brick initiatives build long-term environmental values in students.</p></div>
+        <p>Despite systemic challenges, many communities and local governments are pioneering innovative solutions. <strong>Eco-brick programs</strong>, <strong>zero-waste markets</strong>, <strong>composting programs</strong>, and <strong>upcycling enterprises</strong> are springing up across the country. Schools, barangays, and youth organizations play a critical role in building a culture of waste responsibility from the ground up.</p>
+
+        <div class="cards-grid">
+          <div class="card">
+            <div class="card-icon">🔄</div>
+            <h4>Materials Recovery Facilities</h4>
+            <p>MRFs are mandated in every barangay to sort, process, and recover recyclable and compostable materials before residual waste reaches landfills.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🌱</div>
+            <h4>Composting Programs</h4>
+            <p>Converting organic/biodegradable waste into compost reduces landfill burden and produces valuable soil amendment for urban and community gardens.</p>
+          </div>
+          <div class="card">
+            <div class="card-icon">🏫</div>
+            <h4>School Waste Programs</h4>
+            <p>School-based segregation and eco-brick initiatives engage students in hands-on sustainability practices and build long-term environmental values.</p>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════ -->
+<!-- ───────────────────────────────────────────────────────────────── -->
 <!-- SECTION 5 — THE 5R's -->
-<!-- ═══════════════════════════════════════════════════ -->
+<!-- ───────────────────────────────────────────────────────────────── -->
 <section class="section" id="five-r">
-  <div class="wrap">
-    <div class="sec-hd rev">
-      <div class="sec-num">TOPIC 05 / 05</div>
-      <div class="sec-label">The Sustainable Lifestyle Framework</div>
-      <h2>Refuse, Reduce, Reuse,<br><em>Repair & Recycle</em></h2>
-      <p class="sec-intro">The 5R's offer a practical hierarchy of environmental responsibility — starting with what we choose every single day.</p>
-      <div class="rtime">⏱ 7 min read</div>
+  <div class="ambient-blob b1"></div>
+  <div class="ambient-blob b2" style="background:radial-gradient(ellipse,rgba(212,169,106,0.05),transparent 70%)"></div>
+  <div class="section-float-icon">🔁</div>
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-num">05</div>
+      <div class="section-title-group">
+        <div class="section-tag">The Sustainable Lifestyle Framework</div>
+        <h2 class="section-title">Refuse, Reduce, Reuse,<br><em>Repair & Recycle</em></h2>
+        <p class="section-intro">The 5R's represent a practical, actionable framework for sustainable living. More than a slogan, they offer a hierarchy of environmental responsibility — and they start with a choice each of us makes every single day.</p>
+        <div class="read-time">7 min read</div>
+      </div>
     </div>
 
     <!-- 5R FLIP CARDS -->
-    <div class="r-grid">
-      <div class="r-wrap rev d1">
-        <div class="r-inner">
-          <div class="r-front">
+    <div class="five-r-grid">
+      <div class="r-card-wrapper reveal reveal-delay-1">
+        <div class="r-card-inner">
+          <div class="r-card-front">
             <div class="r-num">01</div>
             <div class="r-letter">Refuse</div>
-            <div class="r-ico">🚫</div>
+            <div class="r-icon">🚫</div>
             <div class="r-word">Don't Accept It</div>
-            <div class="r-hint">hover to flip</div>
+            <div class="flip-hint">hover to flip</div>
           </div>
-          <div class="r-back">
-            <div class="r-back-ico">🚫</div>
-            <div class="r-back-word">Refuse</div>
+          <div class="r-card-back">
+            <div class="r-icon-back">🚫</div>
+            <div class="r-word">Refuse</div>
             <p class="r-tip">Say no to unnecessary items — plastic straws, single-use bags, free promotional items you don't need. The most sustainable product is the one never produced.</p>
           </div>
         </div>
       </div>
-      <div class="r-wrap rev d2">
-        <div class="r-inner">
-          <div class="r-front">
+      <div class="r-card-wrapper reveal reveal-delay-2">
+        <div class="r-card-inner">
+          <div class="r-card-front">
             <div class="r-num">02</div>
             <div class="r-letter">Reduce</div>
-            <div class="r-ico">📉</div>
+            <div class="r-icon">📉</div>
             <div class="r-word">Use Less</div>
-            <div class="r-hint">hover to flip</div>
+            <div class="flip-hint">hover to flip</div>
           </div>
-          <div class="r-back">
-            <div class="r-back-ico">📉</div>
-            <div class="r-back-word">Reduce</div>
-            <p class="r-tip">Consume less energy, less water, fewer products. Buy only what you need. Choose minimal packaging. Quality over quantity, always.</p>
+          <div class="r-card-back">
+            <div class="r-icon-back">📉</div>
+            <div class="r-word">Reduce</div>
+            <p class="r-tip">Consume less energy, less water, less food, fewer products. Buy only what you need. Choose products with minimal packaging. Quality over quantity, always.</p>
           </div>
         </div>
       </div>
-      <div class="r-wrap rev d3">
-        <div class="r-inner">
-          <div class="r-front">
+      <div class="r-card-wrapper reveal reveal-delay-3">
+        <div class="r-card-inner">
+          <div class="r-card-front">
             <div class="r-num">03</div>
             <div class="r-letter">Reuse</div>
-            <div class="r-ico">🔃</div>
+            <div class="r-icon">🔃</div>
             <div class="r-word">Use It Again</div>
-            <div class="r-hint">hover to flip</div>
+            <div class="flip-hint">hover to flip</div>
           </div>
-          <div class="r-back">
-            <div class="r-back-ico">🔃</div>
-            <div class="r-back-word">Reuse</div>
-            <p class="r-tip">Choose reusable over disposable. Bring your own bag, bottle, and container. One item used 100 times beats 100 single-use items.</p>
+          <div class="r-card-back">
+            <div class="r-icon-back">🔃</div>
+            <div class="r-word">Reuse</div>
+            <p class="r-tip">Choose reusable over disposable. Bring your own bag, bottle, and container. Repurpose old items creatively. One item used 100 times beats 100 single-use items.</p>
           </div>
         </div>
       </div>
-      <div class="r-wrap rev d4">
-        <div class="r-inner">
-          <div class="r-front">
+      <div class="r-card-wrapper reveal reveal-delay-4">
+        <div class="r-card-inner">
+          <div class="r-card-front">
             <div class="r-num">04</div>
             <div class="r-letter">Repair</div>
-            <div class="r-ico">🔧</div>
+            <div class="r-icon">🔧</div>
             <div class="r-word">Fix, Don't Discard</div>
-            <div class="r-hint">hover to flip</div>
+            <div class="flip-hint">hover to flip</div>
           </div>
-          <div class="r-back">
-            <div class="r-back-ico">🔧</div>
-            <div class="r-back-word">Repair</div>
-            <p class="r-tip">Before throwing something away, ask: can it be fixed? Mend clothes, repair appliances, restore furniture. Fight the throwaway mentality.</p>
+          <div class="r-card-back">
+            <div class="r-icon-back">🔧</div>
+            <div class="r-word">Repair</div>
+            <p class="r-tip">Before throwing something away, ask: can it be fixed? Mend clothes, repair appliances, restore furniture. Repair culture fights the throwaway mentality at its core.</p>
           </div>
         </div>
       </div>
-      <div class="r-wrap rev d1">
-        <div class="r-inner">
-          <div class="r-front">
+      <div class="r-card-wrapper reveal reveal-delay-1">
+        <div class="r-card-inner">
+          <div class="r-card-front">
             <div class="r-num">05</div>
             <div class="r-letter">Recycle</div>
-            <div class="r-ico">♻️</div>
+            <div class="r-icon">♻️</div>
             <div class="r-word">Last Resort</div>
-            <div class="r-hint">hover to flip</div>
+            <div class="flip-hint">hover to flip</div>
           </div>
-          <div class="r-back">
-            <div class="r-back-ico">♻️</div>
-            <div class="r-back-word">Recycle</div>
-            <p class="r-tip">Recycling is the LAST option — not the first. Sort your waste, support local MRFs, and choose recycled materials to close the loop.</p>
+          <div class="r-card-back">
+            <div class="r-icon-back">♻️</div>
+            <div class="r-word">Recycle</div>
+            <p class="r-tip">Recycling is important, but it's the LAST option — not the first. Sort your waste, support local MRFs, and choose products made from recycled materials to close the loop.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="cols">
+    <div class="content-body" style="margin-top:60px">
       <div class="prose">
         <h3>Why Hierarchy Matters</h3>
-        <p>The 5R's form a <strong>hierarchy of sustainability</strong>. Refusing and reducing prevent waste from being created — always more impactful than managing it afterward. Reusing extends product life. Repairing keeps materials in circulation. Recycling, while valuable, still consumes energy — making it the last line of defense.</p>
-        <p>True sustainability begins with <strong>conscious consumption</strong>.</p>
+        <p>The 5R's are not equal in environmental impact — they form a <strong>hierarchy of sustainability</strong>. Refusing and reducing prevent waste from being created in the first place, which is always more impactful than managing waste after the fact. Reusing extends product life. Repairing keeps materials in circulation. Recycling, while valuable, still consumes energy and resources — making it the last line of defense, not the first.</p>
+        <p>Many people default to recycling because it feels constructive — but without practicing the first four R's, recycling alone cannot address the scale of our waste crisis. True sustainability begins with <strong>conscious consumption</strong>.</p>
 
         <blockquote>
           <p>"There is no such thing as 'away.' When we throw something away, it must go somewhere."</p>
           <cite>— Annie Leonard, The Story of Stuff</cite>
         </blockquote>
 
+        <h3>The 5R's in the Philippine Context</h3>
+        <p>In the Philippines, the 5R framework is increasingly being integrated into school curricula, community programs, and national policy. The DENR and NSWMC regularly promote waste segregation and reduction campaigns. Local heroes like <em>Zero Waste Negros</em> and the barangay-level eco-stores in Quezon City demonstrate that the 5R lifestyle is achievable even in urban Filipino settings.</p>
+        <p>The emergence of <strong>zero-waste stores</strong>, <strong>package-free shopping</strong>, and <strong>community repair cafés</strong> across Metro Manila, Cebu, and Davao proves growing demand for sustainable alternatives. However, systemic support — including better MRF infrastructure, producer responsibility laws, and public education — is essential to scale these efforts nationally.</p>
+
         <h3>Everyday 5R Actions for Students</h3>
         <div class="cause-list">
-          <div class="cause-item"><div class="c-icon">🍱</div><div class="c-text"><h4>Bring Your Own (BYO)</h4><p>Use a reusable lunchbox, tumbler, and utensils every day. Refuse disposable plastics at canteens.</p></div></div>
-          <div class="cause-item"><div class="c-icon">📚</div><div class="c-text"><h4>Reduce Paper Waste</h4><p>Print on both sides, use digital notes, share files digitally. Choose e-books when possible.</p></div></div>
-          <div class="cause-item"><div class="c-icon">👕</div><div class="c-text"><h4>Extend Clothing Life</h4><p>Repair torn clothes instead of discarding. Swap or donate garments. Avoid fast fashion impulse buys.</p></div></div>
-          <div class="cause-item"><div class="c-icon">🔌</div><div class="c-text"><h4>Reduce Energy Use</h4><p>Turn off lights, unplug chargers. Reducing electricity demand lowers carbon emissions from power plants.</p></div></div>
-          <div class="cause-item"><div class="c-icon">🗂️</div><div class="c-text"><h4>Segregate & Recycle Properly</h4><p>Sort waste into biodegradable, recyclable, and residual as required by RA 9003. Bring recyclables to your barangay MRF.</p></div></div>
+          <div class="cause-item">
+            <div class="cause-icon">🍱</div>
+            <div class="cause-text">
+              <h4>Bring Your Own (BYO)</h4>
+              <p>Use a reusable lunchbox, tumbler, and utensils every day. Refuse disposable plastics at canteens and fast food outlets.</p>
+            </div>
+          </div>
+          <div class="cause-item">
+            <div class="cause-icon">📚</div>
+            <div class="cause-text">
+              <h4>Reduce Paper Waste</h4>
+              <p>Print on both sides, use digital notes, and share files digitally. Choose e-books when possible.</p>
+            </div>
+          </div>
+          <div class="cause-item">
+            <div class="cause-icon">👕</div>
+            <div class="cause-text">
+              <h4>Extend Clothing Life</h4>
+              <p>Repair torn clothes instead of discarding them. Swap or donate garments. Avoid fast fashion impulse buys.</p>
+            </div>
+          </div>
+          <div class="cause-item">
+            <div class="cause-icon">🔌</div>
+            <div class="cause-text">
+              <h4>Reduce Energy Use</h4>
+              <p>Turn off lights, unplug chargers, and use devices efficiently. Reducing electricity demand lowers carbon emissions from power plants.</p>
+            </div>
+          </div>
+          <div class="cause-item">
+            <div class="cause-icon">🗂️</div>
+            <div class="cause-text">
+              <h4>Segregate & Recycle Properly</h4>
+              <p>Sort waste into biodegradable, recyclable, and residual as required by RA 9003. Bring recyclables to your barangay's MRF.</p>
+            </div>
+          </div>
         </div>
 
-        <div class="callout ok">
-          <div class="callout-ico">🌱</div>
-          <div class="callout-body"><h4>The Bigger Picture</h4><p>If every Filipino practiced even two of the 5R's consistently, the country could divert millions of tonnes of waste from landfills and oceans annually.</p></div>
+        <div class="callout success">
+          <div class="callout-icon">🌱</div>
+          <div class="callout-body">
+            <h4>The Bigger Picture</h4>
+            <p>If every Filipino practiced even two of the 5R's consistently, the country could divert millions of tonnes of waste from landfills and oceans annually — drastically improving environmental quality and reducing the burden on overwhelmed waste management systems.</p>
+          </div>
         </div>
       </div>
 
-      <div class="aside">
-        <div class="widget rev d1">
-          <div class="wt">💡 Impact Numbers</div>
-          <div class="stat"><div class="stat-v">1 bag</div><div class="stat-l">Reusable bag replaces 500 plastic bags per year</div></div>
-          <div class="stat"><div class="stat-v">50L</div><div class="stat-l">Water saved by fixing one dripping faucet per day</div></div>
-          <div class="stat"><div class="stat-v">60%</div><div class="stat-l">Less energy used in recycled vs. virgin aluminum</div></div>
-          <div class="stat"><div class="stat-v">30%</div><div class="stat-l">of food bought globally is wasted</div></div>
+      <div class="sidebar">
+        <div class="sidebar-widget reveal reveal-delay-1">
+          <div class="widget-title">💡 Impact Numbers</div>
+          <div class="stat-block">
+            <div class="stat-value">1 bag</div>
+            <div class="stat-label">Reusable bag replaces 500 plastic bags per year</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">50L</div>
+            <div class="stat-label">Water saved by repairing one dripping faucet per day</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">60%</div>
+            <div class="stat-label">Less energy used in recycled aluminum vs. virgin aluminum</div>
+          </div>
+          <div class="stat-block">
+            <div class="stat-value">30%</div>
+            <div class="stat-label">of food bought globally is wasted — reduction can make a huge impact</div>
+          </div>
         </div>
 
-        <div class="widget rev d2">
-          <div class="wt">🌍 5R Impact Hierarchy</div>
-          <div class="pbar"><div class="ph"><span>1. Refuse</span><span>★★★★★</span></div><div class="pt"><div class="pf" data-w="100"></div></div></div>
-          <div class="pbar"><div class="ph"><span>2. Reduce</span><span>★★★★★</span></div><div class="pt"><div class="pf" data-w="90"></div></div></div>
-          <div class="pbar"><div class="ph"><span>3. Reuse</span><span>★★★★</span></div><div class="pt"><div class="pf teal" data-w="75"></div></div></div>
-          <div class="pbar"><div class="ph"><span>4. Repair</span><span>★★★★</span></div><div class="pt"><div class="pf gold" data-w="65"></div></div></div>
-          <div class="pbar"><div class="ph"><span>5. Recycle</span><span>★★★</span></div><div class="pt"><div class="pf teal" data-w="45"></div></div></div>
+        <div class="sidebar-widget reveal reveal-delay-2">
+          <div class="widget-title">🌍 5R Hierarchy by Impact</div>
+          <div class="progress-item">
+            <div class="progress-header"><span>1. Refuse</span><span>★★★★★</span></div>
+            <div class="progress-track"><div class="progress-fill" data-width="100"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>2. Reduce</span><span>★★★★★</span></div>
+            <div class="progress-track"><div class="progress-fill" data-width="90"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>3. Reuse</span><span>★★★★</span></div>
+            <div class="progress-track"><div class="progress-fill teal" data-width="75"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>4. Repair</span><span>★★★★</span></div>
+            <div class="progress-track"><div class="progress-fill gold" data-width="65"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header"><span>5. Recycle</span><span>★★★</span></div>
+            <div class="progress-track"><div class="progress-fill teal" data-width="45"></div></div>
+          </div>
         </div>
 
-        <div class="widget rev d3">
-          <div class="wt">🇵🇭 Success Stories</div>
+        <div class="sidebar-widget reveal reveal-delay-3">
+          <div class="widget-title">🇵🇭 Success Stories</div>
           <div class="timeline" style="margin:0">
-            <div class="tl"><h4>Zero Waste Negros</h4><p>A network of communities in Negros Island pioneering zero-waste barangays through composting and local MRFs.</p></div>
-            <div class="tl"><h4>Marikina Repair Cafés</h4><p>Community spaces where volunteers help repair appliances, clothes, and bicycles for free.</p></div>
-            <div class="tl"><h4>Cubao Eco-Hub, QC</h4><p>A package-free grocery initiative demonstrating zero-waste shopping is viable in Metro Manila.</p></div>
+            <div class="tl-item">
+              <h4>Zero Waste Negros</h4>
+              <p>A network of communities in Negros Island pioneering zero-waste barangays through composting and local MRFs.</p>
+            </div>
+            <div class="tl-item">
+              <h4>Marikina Repair Cafés</h4>
+              <p>Community spaces where skilled volunteers help residents repair appliances, clothes, and bicycles for free.</p>
+            </div>
+            <div class="tl-item">
+              <h4>Cubao Eco-Hub, QC</h4>
+              <p>A package-free grocery initiative demonstrating zero-waste shopping is viable in a Metro Manila setting.</p>
+            </div>
           </div>
         </div>
       </div>
@@ -963,36 +2146,58 @@
   </div>
 </section>
 
-<!-- ═══════════════════════════════════════════════════ -->
+<!-- ───────────────────────────────────────────────────────────────── -->
 <!-- CONCLUSION -->
-<!-- ═══════════════════════════════════════════════════ -->
+<!-- ───────────────────────────────────────────────────────────────── -->
 <section id="conclusion">
-  <div class="wrap">
-    <div class="conc-inner rev">
-      <div class="sec-label" style="justify-content:center;margin-bottom:16px">Our Final Thoughts</div>
-      <h2>The <em>Earth</em> Needs Us.<br>Now More Than Ever.</h2>
-      <p>The five topics explored in this blog — global warming, climate change, biodiversity loss, Philippine waste management, and the 5R's — are deeply interconnected threads of the same environmental crisis.</p>
-      <p>As Information Technology students, we have a unique power: the ability to communicate, amplify, and connect people to knowledge. Every article shared, every conversation started, contributes to the culture shift our planet needs.</p>
-      <p>The solutions exist. The science is clear. What is needed now is awareness, will, and collective action. It starts with each of us — in our homes, schools, barangays, and communities.</p>
-      <p class="hi">Be the generation that turns the tide. 🌿</p>
+  <div class="container">
+    <div class="conclusion-inner reveal">
+      <div class="section-tag" style="justify-content:center;margin-bottom:20px">Our Final Thoughts</div>
+      <h2>The <em style="color:var(--green1);font-style:italic">Earth</em> Needs Us.<br>Now More Than Ever.</h2>
+      <p>The five topics explored in this blog — the causes of global warming, the far-reaching impacts of climate change, the devastating effects of biodiversity loss, the broken state of Philippine waste management, and the empowering framework of the 5R's — are not isolated issues. They are deeply interconnected threads of the same environmental crisis.</p>
+      <p>As Information Technology students, we have a unique power: the ability to communicate, amplify, and connect people to knowledge. This blog is more than an academic requirement — it is a call to action. Every article shared, every piece of information spread, and every conversation started contributes to the culture shift our planet so desperately needs.</p>
+      <p>The solutions exist. The science is clear. What is needed now is awareness, will, and collective action. It starts with each of us — in our homes, our schools, our barangays, and our communities. Refuse the unnecessary. Reduce what you consume. Reuse what you have. Repair before discarding. Recycle what remains.</p>
+      <p style="color:var(--green1);font-weight:600;font-size:1.1rem;">Be the generation that turns the tide. 🌿</p>
     </div>
 
-    <div class="cards rev" style="margin-bottom:64px">
-      <div class="card" style="text-align:center"><div class="card-ico">🌡️</div><h4>Global Warming</h4><p>Human activities drive over 95% of warming. Cutting fossil fuel use is the most impactful action we can take.</p></div>
-      <div class="card" style="text-align:center"><div class="card-ico">🌪️</div><h4>Climate Change</h4><p>The Philippines is on the front lines. Adaptation and mitigation must work together to protect Filipino lives.</p></div>
-      <div class="card" style="text-align:center"><div class="card-ico">🦋</div><h4>Biodiversity</h4><p>As a megadiverse nation, protecting Philippine ecosystems is a global responsibility.</p></div>
-      <div class="card" style="text-align:center"><div class="card-ico">♻️</div><h4>Waste Management</h4><p>RA 9003 provides the framework. Full implementation, community compliance, and accountability are needed.</p></div>
-      <div class="card" style="text-align:center"><div class="card-ico">🔁</div><h4>The 5R's</h4><p>Sustainable living begins with daily choices. Refuse → Reduce → Reuse → Repair → Recycle. In that order.</p></div>
+    <div class="cards-grid reveal" style="margin-bottom:60px">
+      <div class="card" style="text-align:center">
+        <div class="card-icon">🌡️</div>
+        <h4>Global Warming</h4>
+        <p>Human activities drive over 95% of warming. Cutting fossil fuel use is the single most impactful action we can take.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="card-icon">🌪️</div>
+        <h4>Climate Change</h4>
+        <p>The Philippines is on the front lines. Adaptation and mitigation must work together to protect Filipino lives and livelihoods.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="card-icon">🦋</div>
+        <h4>Biodiversity</h4>
+        <p>As a megadiverse nation, protecting Philippine ecosystems is not just a local duty — it is a global responsibility.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="card-icon">♻️</div>
+        <h4>Waste Management</h4>
+        <p>RA 9003 provides the framework. What's needed is full implementation, community compliance, and systemic accountability.</p>
+      </div>
+      <div class="card" style="text-align:center">
+        <div class="card-icon">🔁</div>
+        <h4>The 5R's</h4>
+        <p>Sustainable living begins with daily choices. Refuse → Reduce → Reuse → Repair → Recycle. In that order.</p>
+      </div>
     </div>
 
     <footer>
-      <div class="ft-grid">
-        <div>
-          <div class="ft-brand"><span class="leaf">🌿</span> Digital Green Journal</div>
-          <p class="ft-about">An environmental awareness blog created by IT students committed to spreading environmental knowledge and inspiring sustainable action in the Philippines and beyond.</p>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo" style="font-size:1.4rem;display:inline-flex;gap:8px;align-items:center">
+            🌿 <span style="color:var(--text0)">Digital Green Journal</span>
+          </div>
+          <p>An environmental awareness blog created by IT students as part of the Digital Green Journal project. Committed to spreading environmental knowledge and inspiring sustainable action in the Philippines and beyond.</p>
         </div>
         <div>
-          <h5>Topics Covered</h5>
+          <h4>Topics Covered</h4>
           <ul>
             <li>The Causes of Global Warming</li>
             <li>Climate Change and Its Impact</li>
@@ -1002,114 +2207,282 @@
           </ul>
         </div>
         <div>
-          <h5>References & Sources</h5>
+          <h4>References & Sources</h4>
           <ul>
             <li>IPCC Sixth Assessment Report (2021–2022)</li>
             <li>NASA Global Climate Change</li>
             <li>IPBES Global Assessment Report (2019)</li>
             <li>DENR – Republic Act 9003</li>
             <li>PAGASA Climate Reports</li>
-            <li>WWF, Ocean Conservancy (2015)</li>
+            <li>World Wildlife Fund (WWF)</li>
+            <li>Ocean Conservancy (2015)</li>
             <li>Global Climate Risk Index – Germanwatch</li>
+            <li>Philippine Statistics Authority (PSA)</li>
             <li>NSWMC Annual Report</li>
           </ul>
         </div>
       </div>
-      <div class="ft-bottom">
-        <span>The Digital Green Journal © 2025 — IT Students' Environmental Awareness Blog</span>
-        <span>Made with ♻️ & Purpose</span>
+      <div class="footer-bottom">
+        <span>The Digital Green Journal &copy; 2025 — IT Students' Environmental Awareness Blog</span>
+        <span>Made with <span>♻️</span> & Purpose</span>
       </div>
     </footer>
   </div>
 </section>
 
 <!-- BACK TO TOP -->
-<button id="btt" aria-label="Back to top">↑</button>
+<button id="back-top" aria-label="Back to top">↑</button>
 
+<!-- ── SCRIPTS ──────────────────────────────────────────────────────── -->
 <script>
-  // Reading progress
-  const rp = document.getElementById('rp');
-  window.addEventListener('scroll', () => {
-    const total = document.documentElement.scrollHeight - window.innerHeight;
-    rp.style.width = (window.scrollY / total * 100) + '%';
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      const pre = document.getElementById('preloader');
+      pre.classList.add('hide');
+      setTimeout(() => showToast('🌿', 'Welcome to', 'Digital Green Journal'), 900);
+    }, 2200);
   });
 
-  // Nav scroll
-  const nav = document.getElementById('nav');
-  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 50));
+  const toastContainer = document.getElementById('toast-container');
+  const toastQueue = [
+    { icon: '🌡️', label: 'Topic 01', msg: 'Global Warming', section: 'global-warming' },
+    { icon: '🌪️', label: 'Topic 02', msg: 'Climate Change', section: 'climate-change' },
+    { icon: '🦋', label: 'Topic 03', msg: 'Biodiversity Loss', section: 'biodiversity' },
+    { icon: '♻️', label: 'Topic 04', msg: 'Waste Management', section: 'waste-mgmt' },
+    { icon: '🔁', label: 'Topic 05', msg: 'The 5R\'s', section: 'five-r' },
+    { icon: '🌿', label: 'Conclusion', msg: 'Final Thoughts', section: 'conclusion' },
+  ];
+  function showToast(icon, label, msg) {
+    const t = document.createElement('div');
+    t.className = 'toast';
+    t.innerHTML = `<span class="toast-icon">${icon}</span><span class="toast-label">${label}</span>&nbsp;— ${msg}`;
+    toastContainer.appendChild(t);
+    requestAnimationFrame(() => { requestAnimationFrame(() => t.classList.add('show')); });
+    setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 500); }, 3000);
+  }
 
-  // Hamburger
-  const ham = document.getElementById('ham');
-  const mob = document.getElementById('mob');
-  const mobClose = document.getElementById('mob-close');
-  ham.addEventListener('click', () => { mob.classList.add('open'); document.body.style.overflow = 'hidden'; });
-  function closeMob() { mob.classList.remove('open'); document.body.style.overflow = ''; }
-  mobClose.addEventListener('click', closeMob);
-  document.querySelectorAll('.ml').forEach(l => l.addEventListener('click', closeMob));
-
-  // Back to top
-  const btt = document.getElementById('btt');
-  window.addEventListener('scroll', () => btt.classList.toggle('vis', window.scrollY > 400));
-  btt.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-
-  // Reveal on scroll
-  const revObs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
-  }, { threshold: 0.07 });
-  document.querySelectorAll('.rev').forEach(el => revObs.observe(el));
-
-  // Animate progress bars
-  const barObs = new IntersectionObserver(entries => {
+  const toastObserver = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const el = e.target;
-      el.style.width = (el.dataset.w || '0') + '%';
-      barObs.unobserve(el);
+      if (e.isIntersecting) {
+        const match = toastQueue.find(t => t.section === e.target.id);
+        if (match) showToast(match.icon, match.label, match.msg);
+      }
     });
-  }, { threshold: 0.3 });
-  document.querySelectorAll('.pf, .wbar-fill').forEach(el => barObs.observe(el));
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.section, #conclusion').forEach(s => toastObserver.observe(s));
 
-  // Active nav / topic tabs
-  const sections = document.querySelectorAll('.section, #conclusion');
-  const navAs = document.querySelectorAll('.nav-links a');
-  const tabs = document.querySelectorAll('.t-tab');
-  const secObs = new IntersectionObserver(entries => {
+  const dot  = document.getElementById('cursor-dot');
+  const ring = document.getElementById('cursor-ring');
+  let mouseX = 0, mouseY = 0, ringX = 0, ringY = 0;
+  const isFinePointer = window.matchMedia('(pointer: fine)').matches;
+  if (isFinePointer) {
+    document.addEventListener('mousemove', e => {
+      mouseX = e.clientX; mouseY = e.clientY;
+      dot.style.left = mouseX + 'px'; dot.style.top = mouseY + 'px';
+    });
+    function animateCursor() {
+      ringX += (mouseX - ringX) * 0.12; ringY += (mouseY - ringY) * 0.12;
+      ring.style.left = ringX + 'px'; ring.style.top = ringY + 'px';
+      requestAnimationFrame(animateCursor);
+    }
+    animateCursor();
+    const hoverEls = document.querySelectorAll('a, button, .r-card-wrapper, .topic-tab, .card, .side-dot, .cause-item');
+    hoverEls.forEach(el => {
+      el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+      el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+    });
+    document.addEventListener('mouseleave', () => { dot.style.opacity='0'; ring.style.opacity='0'; });
+    document.addEventListener('mouseenter', () => { dot.style.opacity='1'; ring.style.opacity='1'; });
+  } else { dot.style.display='none'; ring.style.display='none'; }
+
+  const sideDots = document.querySelectorAll('.side-dot');
+  sideDots.forEach(d => {
+    d.addEventListener('click', () => {
+      const target = document.getElementById(d.dataset.target);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+  const dotObserver = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const id = e.target.id;
-      navAs.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
-      tabs.forEach(t => t.classList.toggle('active', t.dataset.sec === id));
+      if (e.isIntersecting) {
+        sideDots.forEach(d => d.classList.toggle('active', d.dataset.target === e.target.id));
+      }
     });
-  }, { threshold: 0.35 });
-  sections.forEach(s => secObs.observe(s));
+  }, { threshold: 0.4 });
+  document.querySelectorAll('.section, #conclusion').forEach(s => dotObserver.observe(s));
 
-  // Animated stat counters
-  function animCount(el, target, suffix, dur = 1600) {
-    let start = null;
-    const step = ts => {
-      if (!start) start = ts;
-      const p = Math.min((ts - start) / dur, 1);
-      const ease = 1 - Math.pow(1 - p, 3);
-      el.textContent = Math.floor(ease * target).toLocaleString() + suffix;
-      if (p < 1) requestAnimationFrame(step);
+  const heroDescEl = document.getElementById('hero-desc');
+  const heroText = "Understanding the environmental challenges threatening our planet and the Philippines — and what we can do about it. Our future depends on what we know today.";
+  let twIndex = 0;
+  const cursor = document.createElement('span');
+  cursor.className = 'typewriter-cursor';
+  heroDescEl.appendChild(cursor);
+  function typeWriter() {
+    if (twIndex < heroText.length) {
+      heroDescEl.insertBefore(document.createTextNode(heroText[twIndex]), cursor);
+      twIndex++;
+      setTimeout(typeWriter, twIndex < 10 ? 60 : 28);
+    }
+  }
+  setTimeout(typeWriter, 2600);
+
+  function animateCounter(el, target, suffix, duration = 1800) {
+    let start = 0;
+    const step = (timestamp) => {
+      if (!start) start = timestamp;
+      const progress = Math.min((timestamp - start) / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const current = Math.floor(eased * target);
+      el.textContent = current.toLocaleString() + suffix;
+      if (progress < 1) requestAnimationFrame(step);
       else el.textContent = target.toLocaleString() + suffix;
     };
     requestAnimationFrame(step);
   }
-  const countMap = [
-    { suffix: 'B', val: 37 },
-    { suffix: 'M', val: 800 },
+  const counterMap = [
+    { text: '37B', num: 37, suffix: 'B', label: 'Tonnes of CO₂ emitted globally per year' },
+    { text: '2030', num: 2030, suffix: '', label: 'Deadline to limit warming to 1.5°C (IPCC)' },
+    { text: '800M', num: 800, suffix: 'M', label: 'People threatened by coastal flooding' },
+    { text: '40,000+', num: 40000, suffix: '+', label: 'Tonnes of solid waste generated daily in the Philippines' },
   ];
-  const ctObs = new IntersectionObserver(entries => {
+  const counterObserver = new IntersectionObserver((entries) => {
     entries.forEach(e => {
-      if (!e.isIntersecting || e.target.dataset.counted) return;
-      const text = e.target.textContent;
-      const m = countMap.find(c => text.includes(c.val + c.suffix));
-      if (m) { e.target.dataset.counted = '1'; animCount(e.target, m.val, m.suffix); }
-      ctObs.unobserve(e.target);
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const label = el.nextElementSibling?.textContent.trim() || '';
+      const match = counterMap.find(c => c.label === label);
+      if (match && !el.dataset.counted) { el.dataset.counted = '1'; animateCounter(el, match.num, match.suffix); }
+      counterObserver.unobserve(el);
     });
   }, { threshold: 0.6 });
-  document.querySelectorAll('.stat-v').forEach(el => ctObs.observe(el));
+  document.querySelectorAll('.stat-value').forEach(el => counterObserver.observe(el));
+
+  const canvas = document.getElementById('hero-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = canvas.closest('#hero').offsetHeight;
+  }
+  function createParticles() {
+    particles = [];
+    const count = Math.floor((canvas.width * canvas.height) / 14000);
+    for (let i = 0; i < count; i++) {
+      particles.push({
+        x: Math.random() * canvas.width, y: Math.random() * canvas.height,
+        r: Math.random() * 1.8 + 0.3, vx: (Math.random() - 0.5) * 0.25,
+        vy: -(Math.random() * 0.45 + 0.08), alpha: Math.random() * 0.55 + 0.08,
+        type: Math.random() > 0.6 ? 'leaf' : 'circle', pulse: Math.random() * Math.PI * 2,
+      });
+    }
+  }
+  function drawLeaf(x, y, size, alpha) {
+    ctx.save(); ctx.globalAlpha = alpha;
+    ctx.strokeStyle = `rgba(74,222,128,${alpha})`; ctx.lineWidth = 0.8;
+    ctx.translate(x, y); ctx.rotate(Math.PI / 4);
+    ctx.beginPath(); ctx.ellipse(0, 0, size * 2.2, size, 0, 0, Math.PI * 2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(-size * 1.5, 0); ctx.lineTo(size * 1.5, 0);
+    ctx.globalAlpha = alpha * 0.4; ctx.stroke(); ctx.restore();
+  }
+  function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const time = Date.now() * 0.001;
+    for (let p of particles) {
+      p.pulse += 0.02;
+      const pAlpha = p.alpha * (0.7 + 0.3 * Math.sin(p.pulse));
+      if (p.type === 'circle') {
+        ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(74,222,128,${pAlpha})`; ctx.fill();
+      } else { drawLeaf(p.x, p.y, p.r + 1.2, pAlpha * 0.9); }
+      p.x += p.vx + Math.sin(time + p.pulse) * 0.1; p.y += p.vy;
+      if (p.y < -10) { p.y = canvas.height + 10; p.x = Math.random() * canvas.width; }
+      if (p.x < -10) p.x = canvas.width + 10;
+      if (p.x > canvas.width + 10) p.x = -10;
+    }
+    requestAnimationFrame(animateParticles);
+  }
+  window.addEventListener('resize', () => { resizeCanvas(); createParticles(); });
+  resizeCanvas(); createParticles(); animateParticles();
+
+  const progressBar = document.getElementById('progress-bar');
+  window.addEventListener('scroll', () => {
+    const total = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = ((window.scrollY / total) * 100) + '%';
+  });
+
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 60); });
+
+  const backTop = document.getElementById('back-top');
+  window.addEventListener('scroll', () => { backTop.classList.toggle('visible', window.scrollY > 400); });
+  backTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('mobile-menu').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+  function closeMobileMenu() {
+    document.getElementById('mobile-menu').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  document.getElementById('close-menu').addEventListener('click', closeMobileMenu);
+  document.querySelectorAll('.mob-link').forEach(l => l.addEventListener('click', closeMobileMenu));
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  revealEls.forEach(el => revealObserver.observe(el));
+
+  const progressFills = document.querySelectorAll('.progress-fill, .waste-fill');
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const el = e.target;
+        const target = el.dataset.width || el.textContent.replace('%','').trim();
+        el.style.width = target + '%';
+        barObserver.unobserve(el);
+      }
+    });
+  }, { threshold: 0.3 });
+  progressFills.forEach(el => barObserver.observe(el));
+
+  const allSections = document.querySelectorAll('.section, #conclusion');
+  const navLinks = document.querySelectorAll('.nav-links a');
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        navLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { threshold: 0.4 });
+  allSections.forEach(s => sectionObserver.observe(s));
+
+  const topicTabs = document.querySelectorAll('.topic-tab');
+  const topicObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        topicTabs.forEach(t => t.classList.toggle('active', t.getAttribute('href') === '#' + id));
+      }
+    });
+  }, { threshold: 0.35 });
+  document.querySelectorAll('.section').forEach(s => topicObserver.observe(s));
+
+  document.querySelectorAll('.card, .bio-card, .sidebar-widget').forEach(el => {
+    el.addEventListener('mouseenter', () => document.body.classList.add('cursor-hover'));
+    el.addEventListener('mouseleave', () => document.body.classList.remove('cursor-hover'));
+  });
+
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    document.querySelectorAll('.section-float-icon').forEach(icon => {
+      const parentTop = icon.closest('.section').offsetTop;
+      const offset = (scrollY - parentTop) * 0.04;
+      icon.style.transform = `translateY(${offset}px) rotate(${offset * 0.5}deg)`;
+    });
+  });
 </script>
 </body>
 </html>

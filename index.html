@@ -60,6 +60,7 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 14px 32px;
       transition: all 0.3s ease;
+      overflow: hidden;
       width: 100%;
     }
     nav.scrolled {
@@ -665,6 +666,16 @@
       .five-r-grid { grid-template-columns: 1fr; }
       .topic-tab .t-icon { font-size: 1.2rem; }
       .topic-tab .t-label { font-size: 0.58rem; }
+    }
+
+    /* ── MOBILE OVERRIDE — placed last to win specificity ── */
+    @media screen and (max-width: 900px) {
+      ul.nav-links,
+      nav ul.nav-links,
+      #navbar ul.nav-links { display: none !important; visibility: hidden !important; }
+      button#hamburger,
+      nav button#hamburger,
+      #navbar button#hamburger { display: flex !important; visibility: visible !important; }
     }
   </style>
 </head>

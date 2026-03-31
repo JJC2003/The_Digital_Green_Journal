@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Climate Change and Its Impact – The Digital Green Journal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root { --black:#101010;--white:#fafaf8;--green:#2a6344;--green-pale:#eef6f1;--gray:#666;--gray-light:#e8e8e6;--accent:#7ecf9e;--serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',sans-serif; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--sans);background:var(--white);color:var(--black);}
+    nav{position:fixed;top:0;left:0;width:100%;z-index:999;background:var(--white);border-bottom:1px solid var(--gray-light);display:flex;align-items:center;justify-content:space-between;padding:0 60px;height:64px;}
+    .nav-logo{font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--black);text-decoration:none;}
+    .nav-back{display:flex;align-items:center;gap:8px;font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:color 0.2s;}
+    .nav-back:hover{color:var(--green);}
+    .article-hero{margin-top:64px;background:linear-gradient(160deg,#0d1f2d 0%,#1a4a6e 60%,#2060a0 100%);min-height:480px;display:flex;align-items:flex-end;padding:80px 120px;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;inset:0;opacity:0.05;background-image:radial-gradient(circle at 2px 2px,#fff 1px,transparent 0);background-size:28px 28px;}
+    .article-hero-emoji{position:absolute;right:100px;top:50%;transform:translateY(-50%);font-size:10rem;opacity:0.08;}
+    .article-hero-content{position:relative;z-index:2;max-width:640px;}
+    .article-tag{display:inline-block;font-size:0.7rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;}
+    .article-hero h1{font-family:var(--serif);font-size:clamp(2rem,4vw,3.4rem);font-weight:900;color:var(--white);line-height:1.1;margin-bottom:20px;}
+    .article-hero p{font-size:1.05rem;line-height:1.7;color:rgba(255,255,255,0.7);}
+    .article-meta{display:flex;gap:28px;margin-top:28px;font-size:0.78rem;color:rgba(255,255,255,0.45);letter-spacing:0.06em;}
+    .article-body{max-width:1400px;margin:0 auto;padding:80px 30px 100px;}
+    .lead{font-family:var(--serif);font-size:1.3rem;font-style:italic;line-height:1.7;color:#333;margin-bottom:56px;padding-bottom:48px;border-bottom:1px solid var(--gray-light);}
+    h2.section-h{font-family:var(--serif);font-size:1.8rem;font-weight:700;line-height:1.2;margin:56px 0 20px;}
+    h3.sub-h{font-size:0.85rem;font-weight:600;letter-spacing:0.1em;color:var(--green);margin:36px 0 12px;text-transform:uppercase;}
+    p{font-size:1.02rem;line-height:1.85;color:#333;margin-bottom:20px;}
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--gray-light);margin:48px 0;border:1px solid var(--gray-light);}
+    .stat-cell{background:var(--white);padding:28px 20px;text-align:center;}
+    .stat-number{font-family:var(--serif);font-size:2rem;font-weight:700;color:var(--green);display:block;margin-bottom:6px;}
+    .stat-label{font-size:0.8rem;color:var(--gray);line-height:1.4;}
+    .impact-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--gray-light);border:1px solid var(--gray-light);margin:48px 0;}
+    .impact-cell{background:var(--white);padding:32px 24px;}
+    .impact-cell .ic-emoji{font-size:1.8rem;margin-bottom:12px;display:block;}
+    .impact-cell h4{font-family:var(--serif);font-size:1rem;font-weight:700;margin-bottom:10px;}
+    .impact-cell p{font-size:0.88rem;line-height:1.6;color:var(--gray);margin:0;}
+    .pull-quote{margin:56px 0;padding:40px 48px;background:var(--black);color:var(--white);}
+    .pull-quote blockquote{font-family:var(--serif);font-size:1.4rem;font-style:italic;line-height:1.5;margin-bottom:16px;}
+    .pull-quote cite{font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);}
+    .info-panel{border:1px solid var(--gray-light);padding:36px;margin:40px 0;}
+    .info-panel h4{font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:20px;}
+    .info-panel ul{list-style:none;}
+    .info-panel ul li{padding:10px 0;border-bottom:1px solid var(--gray-light);font-size:0.95rem;line-height:1.6;color:#333;display:flex;gap:12px;}
+    .info-panel ul li:last-child{border-bottom:none;}
+    .info-panel ul li::before{content:'—';color:var(--green);flex-shrink:0;}
+    .article-refs{margin-top:80px;padding-top:40px;border-top:1px solid var(--gray-light);}
+    .article-refs h3{font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray);margin-bottom:24px;}
+    .article-refs ol{list-style:none;counter-reset:ref;}
+    .article-refs ol li{counter-increment:ref;padding:10px 0;border-bottom:1px solid var(--gray-light);font-size:0.88rem;line-height:1.5;display:flex;gap:14px;align-items:baseline;}
+    .article-refs ol li:last-child{border-bottom:none;}
+    .article-refs ol li::before{content:counter(ref);font-size:0.7rem;font-weight:700;color:var(--green);background:var(--green-pale);padding:2px 7px;border-radius:2px;flex-shrink:0;}
+    .article-refs ol li a{color:#333;text-decoration:none;transition:color 0.2s;}
+    .article-refs ol li a:hover{color:var(--green);}
+    .article-nav-bottom{border-top:1px solid var(--gray-light);background:#f4f4f2;padding:40px 60px;display:flex;justify-content:space-between;align-items:center;}
+    .article-nav-bottom a{display:flex;align-items:center;gap:10px;font-size:0.82rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--black);text-decoration:none;transition:color 0.2s;}
+    .article-nav-bottom a:hover{color:var(--green);}
+    .next-label{font-size:0.7rem;font-weight:400;color:var(--gray);letter-spacing:0.04em;display:block;margin-bottom:4px;text-transform:none;}
+    @media(max-width:768px){nav{padding:0 24px;}.article-hero{padding:60px 30px;min-height:360px;}.article-hero-emoji{display:none;}.stats-row,.impact-grid{grid-template-columns:repeat(2,1fr);}.pull-quote{padding:28px 24px;}.article-body{padding:48px 24px 80px;}.article-nav-bottom{padding:32px 24px;flex-direction:column;gap:24px;}}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-back"><i class="fas fa-arrow-left"></i> Home page</a>
+    <a href="index.html" class="nav-logo">The Digital Green Journal</a>
+  </nav>
+
+  <div class="article-hero">
+    <div class="article-hero-emoji">🌊</div>
+    <div class="article-hero-content">
+      <div class="article-tag">Climate Science &nbsp;·&nbsp; Topic 02</div>
+      <h1>Climate Change and Its Impact</h1>
+      <p>From rising seas to displaced communities — how a warming planet is reshaping life as we know it.</p>
+      <div class="article-meta"><span>2026</span><span>7 min read</span><span>The Digital Green Journal</span></div>
+    </div>
+  </div>
+
+  <div class="article-body">
+    <p class="lead">Climate change is no longer a warning about the future — it is the defining reality of the present. From record-breaking heatwaves to catastrophic floods, rising seas, and disappearing glaciers, the consequences of a warming planet are unfolding at an accelerating pace across every corner of the Earth.</p>
+
+    <h2 class="section-h">What is Climate Change?</h2>
+    <p>Climate change refers to long-term shifts in global temperatures and weather patterns. While natural variations have always occurred, the term now predominantly refers to the human-induced changes that have accelerated dramatically since the mid-20th century. The burning of fossil fuels, deforestation, and industrial activity have loaded the atmosphere with greenhouse gases, triggering a cascade of consequences worldwide.</p>
+
+    <div class="stats-row">
+      <div class="stat-cell"><span class="stat-number">3.6mm</span><span class="stat-label">Sea level rise per year on average since 1993</span></div>
+      <div class="stat-cell"><span class="stat-number">2×</span><span class="stat-label">Arctic warming rate compared to the global average</span></div>
+      <div class="stat-cell"><span class="stat-number">40%</span><span class="stat-label">Decline in Arctic sea ice extent since 1979</span></div>
+      <div class="stat-cell"><span class="stat-number">+50%</span><span class="stat-label">Increase in extreme weather event intensity since 1980</span></div>
+    </div>
+
+    <h2 class="section-h">Environmental Impacts</h2>
+    <h3 class="sub-h">Rising Sea Levels</h3>
+    <p>As global temperatures rise, glaciers and ice sheets melt, adding water to the oceans. Simultaneously, warmer water expands in volume. Sea levels have risen approximately 20 cm since 1900, with the rate accelerating in recent decades. Low-lying coastal nations and island communities face existential threats.</p>
+    <h3 class="sub-h">Extreme Weather Events</h3>
+    <p>Climate change makes extreme weather more frequent and intense. Typhoons draw energy from warmer ocean surfaces. Droughts intensify as evaporation increases. Heavy rainfall becomes more extreme as the atmosphere holds more moisture. In the Philippines, the link between warming and increasingly destructive typhoons is well documented.</p>
+    <h3 class="sub-h">Wildfires and Heatwaves</h3>
+    <p>Prolonged droughts and elevated temperatures create conditions ripe for wildfires. Countries like Australia, Canada, and the United States have experienced record-breaking fire seasons. Heatwaves are becoming longer, more frequent, and deadlier, with serious consequences for human health, agriculture, and ecosystems.</p>
+
+    <h2 class="section-h">Social and Human Impacts</h2>
+    <div class="impact-grid">
+      <div class="impact-cell"><span class="ic-emoji">🏠</span><h4>Displacement & Migration</h4><p>An estimated 216 million people could be displaced within their own countries by 2050 due to climate impacts (World Bank, 2021).</p></div>
+      <div class="impact-cell"><span class="ic-emoji">🌾</span><h4>Food Security</h4><p>Climate change threatens crop yields. Heat stress, altered rainfall, and droughts put food production at risk, especially in tropical nations.</p></div>
+      <div class="impact-cell"><span class="ic-emoji">💧</span><h4>Water Scarcity</h4><p>By 2050, up to 5.7 billion people could face water scarcity for at least one month per year due to changing precipitation patterns.</p></div>
+      <div class="impact-cell"><span class="ic-emoji">🏥</span><h4>Public Health</h4><p>Climate change expands the range of disease vectors, worsens air quality, and increases heat-related illness — a global public health emergency.</p></div>
+      <div class="impact-cell"><span class="ic-emoji">⚖️</span><h4>Inequality & Justice</h4><p>Communities least responsible for climate change are often the most vulnerable. Climate change deepens existing inequalities worldwide.</p></div>
+      <div class="impact-cell"><span class="ic-emoji">💸</span><h4>Economic Losses</h4><p>Extreme weather causes trillions in damages globally. The Philippines loses an estimated 0.8–1% of GDP annually to climate-related disasters.</p></div>
+    </div>
+
+    <div class="pull-quote">
+      <blockquote>"Climate change is not just an environmental issue. It is a threat multiplier that worsens poverty, hunger, health, displacement, and conflict."</blockquote>
+      <cite>United Nations Development Programme (UNDP)</cite>
+    </div>
+
+    <h2 class="section-h">Impact on the Philippines</h2>
+    <p>The Philippines is consistently ranked among the most climate-vulnerable countries in the world. An archipelago of over 7,000 islands, it faces rising sea levels, more intense typhoons (an average of 20 per year), coastal erosion, coral bleaching, and changing agricultural conditions threatening millions of farmers and fisherfolk.</p>
+    <p>Typhoon Haiyan (Yolanda) in 2013 — one of the most powerful storms ever recorded at landfall — killed over 6,000 people and displaced more than 4 million. Scientists have linked the intensification of such storms to rising sea surface temperatures caused by climate change.</p>
+
+    <div class="info-panel">
+      <h4>Philippines Climate Vulnerability — Key Facts</h4>
+      <ul>
+        <li>Ranked 3rd most affected country by extreme weather in the Global Climate Risk Index</li>
+        <li>Faces an average of 20 typhoons per year, 7–8 of which make direct landfall</li>
+        <li>Sea levels around the Philippines rising at twice the global average rate</li>
+        <li>Coral reefs — vital to fisheries and coastal protection — face widespread bleaching</li>
+        <li>Over 60% of the population lives in coastal areas at risk of flooding and storm surge</li>
+      </ul>
+    </div>
+
+    <div class="article-refs">
+      <h3>References</h3>
+      <ol>
+        <li><a href="https://www.ipcc.ch/report/ar6/wg2/" target="_blank">IPCC – AR6 Working Group II: Impacts, Adaptation and Vulnerability</a></li>
+        <li><a href="https://climate.nasa.gov/effects/" target="_blank">NASA – Effects of Climate Change</a></li>
+        <li><a href="https://www.un.org/en/climatechange/science/climate-issues/climate-threats" target="_blank">United Nations – Climate Threats</a></li>
+        <li><a href="https://www.worldbank.org/en/topic/climatechange" target="_blank">World Bank – Climate Change Overview</a></li>
+        <li><a href="https://www.pagasa.dost.gov.ph/" target="_blank">PAGASA – Philippine Climate Data</a></li>
+        <li><a href="https://germanwatch.org/en/cri" target="_blank">Germanwatch – Global Climate Risk Index</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="article-nav-bottom">
+    <a href="environment.html"><i class="fas fa-arrow-left"></i> The Causes of Global Warming</a>
+    <a href="biodiversity.html"><span><span class="next-label">Next Article</span>Effect of Biodiversity Loss <i class="fas fa-arrow-right"></i></span></a>
+  </div>
+</body>
+</html>

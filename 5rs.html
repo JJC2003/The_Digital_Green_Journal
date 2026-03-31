@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>The 5R's of Sustainability – The Digital Green Journal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{--black:#101010;--white:#fafaf8;--green:#2a6344;--green-pale:#eef6f1;--gray:#666;--gray-light:#e8e8e6;--accent:#7ecf9e;--serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',sans-serif;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--sans);background:var(--white);color:var(--black);}
+    nav{position:fixed;top:0;left:0;width:100%;z-index:999;background:var(--white);border-bottom:1px solid var(--gray-light);display:flex;align-items:center;justify-content:space-between;padding:0 60px;height:64px;}
+    .nav-logo{font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--black);text-decoration:none;}
+    .nav-back{display:flex;align-items:center;gap:8px;font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:color 0.2s;}
+    .nav-back:hover{color:var(--green);}
+    .article-hero{margin-top:64px;background:linear-gradient(160deg,#0a2d1c 0%,#1e6340 60%,#2d8a57 100%);min-height:480px;display:flex;align-items:flex-end;padding:80px 120px;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;inset:0;opacity:0.05;background-image:radial-gradient(circle at 2px 2px,#fff 1px,transparent 0);background-size:28px 28px;}
+    .article-hero-emoji{position:absolute;right:100px;top:50%;transform:translateY(-50%);font-size:10rem;opacity:0.08;}
+    .article-hero-content{position:relative;z-index:2;max-width:640px;}
+    .article-tag{display:inline-block;font-size:0.7rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;}
+    .article-hero h1{font-family:var(--serif);font-size:clamp(2rem,4vw,3.4rem);font-weight:900;color:var(--white);line-height:1.1;margin-bottom:20px;}
+    .article-hero p{font-size:1.05rem;line-height:1.7;color:rgba(255,255,255,0.7);}
+    .article-meta{display:flex;gap:28px;margin-top:28px;font-size:0.78rem;color:rgba(255,255,255,0.45);letter-spacing:0.06em;}
+    .article-body{max-width:740px;margin:0 auto;padding:80px 30px 100px;}
+    .lead{font-family:var(--serif);font-size:1.3rem;font-style:italic;line-height:1.7;color:#333;margin-bottom:56px;padding-bottom:48px;border-bottom:1px solid var(--gray-light);}
+    h2.section-h{font-family:var(--serif);font-size:1.8rem;font-weight:700;line-height:1.2;margin:56px 0 20px;}
+    h3.sub-h{font-size:0.85rem;font-weight:600;letter-spacing:0.1em;color:var(--green);margin:36px 0 12px;text-transform:uppercase;}
+    p{font-size:1.02rem;line-height:1.85;color:#333;margin-bottom:20px;}
+
+    /* Hierarchy ladder */
+    .hierarchy{margin:48px 0;background:var(--black);padding:48px;}
+    .hierarchy h4{font-size:0.78rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:28px;text-align:center;}
+    .h-row{display:flex;align-items:center;gap:16px;margin-bottom:10px;}
+    .h-row:last-child{margin-bottom:0;}
+    .h-num{font-family:var(--serif);font-size:1.5rem;font-weight:700;color:rgba(255,255,255,0.2);width:32px;flex-shrink:0;text-align:center;}
+    .h-bar{height:52px;background:rgba(255,255,255,0.08);display:flex;align-items:center;padding:0 24px;flex:1;transition:background 0.2s;}
+    .h-bar:hover{background:rgba(255,255,255,0.14);}
+    .h-bar-text{font-size:0.9rem;font-weight:600;color:rgba(255,255,255,0.85);letter-spacing:0.04em;}
+    .h-badge{margin-left:auto;font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);white-space:nowrap;}
+    /* Widths for pyramid feel */
+    .h-row:nth-child(2) .h-bar{max-width:100%;}
+    .h-row:nth-child(3) .h-bar{max-width:90%;}
+    .h-row:nth-child(4) .h-bar{max-width:80%;}
+    .h-row:nth-child(5) .h-bar{max-width:70%;}
+    .h-row:nth-child(6) .h-bar{max-width:60%;}
+
+    /* R blocks */
+    .r-block{border-top:1px solid var(--gray-light);padding:48px 0;display:grid;grid-template-columns:80px 1fr;gap:36px;align-items:start;}
+    .r-index{font-family:var(--serif);font-size:3.5rem;font-weight:900;color:var(--gray-light);line-height:1;padding-top:4px;}
+    .r-content h3{font-family:var(--serif);font-size:1.5rem;font-weight:700;margin-bottom:14px;}
+    .r-content p{font-size:1rem;line-height:1.85;color:#333;margin-bottom:14px;}
+    .r-content p:last-child{margin:0;}
+    .r-example{margin-top:16px;font-size:0.85rem;color:var(--green);font-weight:500;border-left:2px solid var(--green);padding-left:14px;line-height:1.6;}
+
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--gray-light);margin:48px 0;border:1px solid var(--gray-light);}
+    .stat-cell{background:var(--white);padding:28px 20px;text-align:center;}
+    .stat-number{font-family:var(--serif);font-size:2rem;font-weight:700;color:var(--green);display:block;margin-bottom:6px;}
+    .stat-label{font-size:0.8rem;color:var(--gray);line-height:1.4;}
+    .pull-quote{margin:56px 0;padding:40px 48px;background:var(--black);color:var(--white);}
+    .pull-quote blockquote{font-family:var(--serif);font-size:1.4rem;font-style:italic;line-height:1.5;margin-bottom:16px;}
+    .pull-quote cite{font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);}
+    .info-panel{border:1px solid var(--gray-light);padding:36px;margin:40px 0;}
+    .info-panel h4{font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);margin-bottom:20px;}
+    .info-panel ul{list-style:none;}
+    .info-panel ul li{padding:10px 0;border-bottom:1px solid var(--gray-light);font-size:0.95rem;line-height:1.6;color:#333;display:flex;gap:12px;}
+    .info-panel ul li:last-child{border-bottom:none;}
+    .info-panel ul li::before{content:'—';color:var(--green);flex-shrink:0;}
+    .article-refs{margin-top:80px;padding-top:40px;border-top:1px solid var(--gray-light);}
+    .article-refs h3{font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray);margin-bottom:24px;}
+    .article-refs ol{list-style:none;counter-reset:ref;}
+    .article-refs ol li{counter-increment:ref;padding:10px 0;border-bottom:1px solid var(--gray-light);font-size:0.88rem;line-height:1.5;display:flex;gap:14px;align-items:baseline;}
+    .article-refs ol li:last-child{border-bottom:none;}
+    .article-refs ol li::before{content:counter(ref);font-size:0.7rem;font-weight:700;color:var(--green);background:var(--green-pale);padding:2px 7px;border-radius:2px;flex-shrink:0;}
+    .article-refs ol li a{color:#333;text-decoration:none;transition:color 0.2s;}
+    .article-refs ol li a:hover{color:var(--green);}
+    .article-nav-bottom{border-top:1px solid var(--gray-light);background:#f4f4f2;padding:40px 60px;display:flex;justify-content:space-between;align-items:center;}
+    .article-nav-bottom a{display:flex;align-items:center;gap:10px;font-size:0.82rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--black);text-decoration:none;transition:color 0.2s;}
+    .article-nav-bottom a:hover{color:var(--green);}
+    .next-label{font-size:0.7rem;font-weight:400;color:var(--gray);letter-spacing:0.04em;display:block;margin-bottom:4px;text-transform:none;}
+    @media(max-width:768px){nav{padding:0 24px;}.article-hero{padding:60px 30px;min-height:360px;}.article-hero-emoji{display:none;}.stats-row{grid-template-columns:repeat(2,1fr);}.r-block{grid-template-columns:1fr;gap:12px;}.r-index{font-size:2.5rem;}.pull-quote{padding:28px 24px;}.article-body{padding:48px 24px 80px;}.article-nav-bottom{padding:32px 24px;flex-direction:column;gap:24px;}.hierarchy{padding:28px 20px;}}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-back"><i class="fas fa-arrow-left"></i> All Topics</a>
+    <a href="index.html" class="nav-logo">The Digital Green Journal</a>
+  </nav>
+
+  <div class="article-hero">
+    <div class="article-hero-emoji">♻️</div>
+    <div class="article-hero-content">
+      <div class="article-tag">Sustainable Living &nbsp;·&nbsp; Topic 05</div>
+      <h1>Refuse, Reduce, Reuse, Repair & Recycle</h1>
+      <p>A practical, powerful framework for sustainable living — and why refusing is more powerful than recycling.</p>
+      <div class="article-meta"><span>2026</span><span>6 min read</span><span>The Digital Green Journal</span></div>
+    </div>
+  </div>
+
+  <div class="article-body">
+    <p class="lead">In a world producing over 2 billion tonnes of municipal solid waste per year — a number projected to grow to 3.4 billion by 2050 — the 5R's framework offers a clear, actionable hierarchy for minimizing waste. More than a checklist, it represents a fundamental shift in how we think about our relationship with the things we consume.</p>
+
+    <h2 class="section-h">Why a Hierarchy?</h2>
+    <p>The 5R's are not equal — they form a deliberate hierarchy from most to least impactful. Too often, conversations about sustainability jump straight to recycling. But recycling is the last resort. The most powerful action is the one taken before a product is even purchased. Here is the order of priority:</p>
+
+    <div class="hierarchy">
+      <h4>The 5R Waste Hierarchy</h4>
+      <div class="h-row">
+        <div class="h-num">1</div>
+        <div class="h-bar"><span class="h-bar-text">🚫 Refuse</span><span class="h-badge">Most Impactful</span></div>
+      </div>
+      <div class="h-row">
+        <div class="h-num">2</div>
+        <div class="h-bar"><span class="h-bar-text">📉 Reduce</span></div>
+      </div>
+      <div class="h-row">
+        <div class="h-num">3</div>
+        <div class="h-bar"><span class="h-bar-text">🔁 Reuse</span></div>
+      </div>
+      <div class="h-row">
+        <div class="h-num">4</div>
+        <div class="h-bar"><span class="h-bar-text">🔧 Repair</span></div>
+      </div>
+      <div class="h-row">
+        <div class="h-num">5</div>
+        <div class="h-bar"><span class="h-bar-text">♻️ Recycle</span><span class="h-badge">Last Resort</span></div>
+      </div>
+    </div>
+
+    <h2 class="section-h">The 5R's in Detail</h2>
+
+    <div class="r-block">
+      <div class="r-index">01</div>
+      <div class="r-content">
+        <h3>🚫 Refuse</h3>
+        <p>The most powerful of the 5R's is the simplest: say no. Refuse things you don't need — free promotional items, plastic straws, single-use bags, excessive packaging, and unnecessary purchases. By refusing, you prevent waste before it is ever created. You also send a market signal to producers that consumers demand change.</p>
+        <p>Refusing is not deprivation — it is intentionality. It means choosing not to participate in systems that generate unnecessary waste.</p>
+        <div class="r-example">Refuse the plastic straw at a restaurant. Decline flyers you won't read. Say no to a product you don't truly need.</div>
+      </div>
+    </div>
+
+    <div class="r-block">
+      <div class="r-index">02</div>
+      <div class="r-content">
+        <h3>📉 Reduce</h3>
+        <p>When you can't refuse, reduce. Buy less, choose products with less packaging, consume fewer resources, and be mindful of your overall footprint. Reducing consumption addresses the root issue of overconsumption that drives the waste and climate crisis.</p>
+        <p>Reducing also applies to energy, water, and food waste. An estimated one-third of all food produced globally is wasted — reducing food waste alone would have an enormous environmental impact.</p>
+        <div class="r-example">Buy only what you need. Choose minimal packaging. Turn off lights. Plan meals to avoid food waste.</div>
+      </div>
+    </div>
+
+    <div class="r-block">
+      <div class="r-index">03</div>
+      <div class="r-content">
+        <h3>🔁 Reuse</h3>
+        <p>Before throwing something away, ask: can this be used again? Reusing extends the life of products, reducing demand for new ones and the resources required to make them. In the Philippines, the culture of "ukay-ukay" (secondhand clothing markets) and sharing goods within communities is a long-standing example of reuse in practice.</p>
+        <div class="r-example">Bring a reusable bag and water bottle. Use cloth rags instead of paper towels. Donate or sell items you no longer need. Shop secondhand.</div>
+      </div>
+    </div>
+
+    <div class="r-block">
+      <div class="r-index">04</div>
+      <div class="r-content">
+        <h3>🔧 Repair</h3>
+        <p>In today's throwaway culture, the instinct is often to discard a broken item and buy a new one. But repairing extends the lifespan of products significantly — reducing manufacturing demand, resource extraction, and waste generation. A culture of repair also supports local artisans, cobblers, tailors, and technicians.</p>
+        <p>The Right to Repair movement is growing globally, advocating for laws that require manufacturers to make products repairable and to provide spare parts to consumers.</p>
+        <div class="r-example">Take clothes to a tailor instead of throwing them away. Get electronics fixed at a repair shop. Buy products designed to last.</div>
+      </div>
+    </div>
+
+    <div class="r-block">
+      <div class="r-index">05</div>
+      <div class="r-content">
+        <h3>♻️ Recycle</h3>
+        <p>Recycling — converting waste materials into new products — is the best-known of the R's, but it is also the last resort. Recycling is valuable, but it requires energy and resources, and not all materials can be recycled infinitely. It is far better to have refused or reduced in the first place.</p>
+        <p>Effective recycling requires proper segregation at source. In the Philippines, RA 9003 mandates segregation into biodegradable, recyclable, and residual waste. Composting organic waste is the recycling equivalent for biodegradable materials.</p>
+        <div class="r-example">Segregate paper, plastic, glass, and metal. Compost food waste. Bring e-waste to certified collection points.</div>
+      </div>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-cell"><span class="stat-number">2B+</span><span class="stat-label">Tonnes of municipal solid waste generated globally per year</span></div>
+      <div class="stat-cell"><span class="stat-number">33%</span><span class="stat-label">Of all food produced globally is wasted — worth $1 trillion annually</span></div>
+      <div class="stat-cell"><span class="stat-number">91%</span><span class="stat-label">Of plastic produced has never been recycled — most ends in landfills</span></div>
+      <div class="stat-cell"><span class="stat-number">95%</span><span class="stat-label">Of packaging material value is lost after a single use</span></div>
+    </div>
+
+    <div class="pull-quote">
+      <blockquote>"There is no away. When we throw anything away, it must go somewhere."</blockquote>
+      <cite>Annie Leonard, Author of The Story of Stuff</cite>
+    </div>
+
+    <h2 class="section-h">The 5R's in the Philippine Context</h2>
+    <p>The 5R's framework aligns directly with the Philippines' Ecological Solid Waste Management Act (RA 9003). Filipino culture has long embraced principles of thrift, resourcefulness, and community sharing — from the bayanihan spirit to the traditions of repurposing household materials.</p>
+    <p>However, the rapid growth of consumer culture, the dominance of sachet economy packaging, and the normalization of single-use plastics have undermined these traditions. Reviving and modernizing them through the lens of the 5R's offers a culturally resonant path toward sustainability.</p>
+
+    <div class="info-panel">
+      <h4>Applying the 5R's in Filipino Daily Life</h4>
+      <ul>
+        <li><strong>Refuse:</strong> Say no to plastic bags at palengkes and sari-sari stores; ask for your order without a straw</li>
+        <li><strong>Reduce:</strong> Buy in bulk to minimize packaging; plan your grocery list to avoid food waste</li>
+        <li><strong>Reuse:</strong> Bring a tumbler and eco-bag everywhere; participate in ukay-ukay culture</li>
+        <li><strong>Repair:</strong> Bring broken appliances to repair shops; learn basic sewing to mend clothes</li>
+        <li><strong>Recycle:</strong> Segregate waste properly at home; compost food waste and kitchen scraps</li>
+      </ul>
+    </div>
+
+    <div class="article-refs">
+      <h3>References</h3>
+      <ol>
+        <li><a href="https://www.unep.org/resources/report/global-waste-management-outlook" target="_blank">UNEP – Global Waste Management Outlook</a></li>
+        <li><a href="https://www.epa.gov/recycle/reduce-reuse-recycle" target="_blank">US EPA – Reduce, Reuse, Recycle</a></li>
+        <li><a href="https://www.greenpeace.org/international/story/7257/what-is-the-zero-waste-hierarchy/" target="_blank">Greenpeace – Zero Waste Hierarchy</a></li>
+        <li><a href="https://www.worldbank.org/en/topic/urbandevelopment/brief/solid-waste-management" target="_blank">World Bank – Solid Waste Management</a></li>
+        <li><a href="https://nswmc.emb.gov.ph/" target="_blank">NSWMC – National Solid Waste Management Commission PH</a></li>
+        <li><a href="https://www.fao.org/food-loss-and-food-waste/en/" target="_blank">FAO – Food Loss and Food Waste</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="article-nav-bottom">
+    <a href="waste.html"><i class="fas fa-arrow-left"></i> Philippine Waste Management</a>
+    <a href="homepage.html#conclusion"><span><span class="next-label">Wrap Up</span>Read Our Conclusion <i class="fas fa-arrow-right"></i></span></a>
+  </div>
+</body>
+</html>

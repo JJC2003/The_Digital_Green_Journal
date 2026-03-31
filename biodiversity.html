@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Effect of Biodiversity Loss – The Digital Green Journal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{--black:#101010;--white:#fafaf8;--green:#2a6344;--green-pale:#eef6f1;--gray:#666;--gray-light:#e8e8e6;--accent:#b89edc;--serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',sans-serif;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--sans);background:var(--white);color:var(--black);}
+    nav{position:fixed;top:0;left:0;width:100%;z-index:999;background:var(--white);border-bottom:1px solid var(--gray-light);display:flex;align-items:center;justify-content:space-between;padding:0 60px;height:64px;}
+    .nav-logo{font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--black);text-decoration:none;}
+    .nav-back{display:flex;align-items:center;gap:8px;font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:color 0.2s;}
+    .nav-back:hover{color:#6a3fb5;}
+    .article-hero{margin-top:64px;background:linear-gradient(160deg,#2d0d3a 0%,#5c1a7a 60%,#7a3fa0 100%);min-height:480px;display:flex;align-items:flex-end;padding:80px 120px;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;inset:0;opacity:0.05;background-image:radial-gradient(circle at 2px 2px,#fff 1px,transparent 0);background-size:28px 28px;}
+    .article-hero-emoji{position:absolute;right:100px;top:50%;transform:translateY(-50%);font-size:10rem;opacity:0.08;}
+    .article-hero-content{position:relative;z-index:2;max-width:640px;}
+    .article-tag{display:inline-block;font-size:0.7rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;}
+    .article-hero h1{font-family:var(--serif);font-size:clamp(2rem,4vw,3.4rem);font-weight:900;color:var(--white);line-height:1.1;margin-bottom:20px;}
+    .article-hero p{font-size:1.05rem;line-height:1.7;color:rgba(255,255,255,0.7);}
+    .article-meta{display:flex;gap:28px;margin-top:28px;font-size:0.78rem;color:rgba(255,255,255,0.45);letter-spacing:0.06em;}
+    .article-body{max-width:740px;margin:0 auto;padding:80px 30px 100px;}
+    .lead{font-family:var(--serif);font-size:1.3rem;font-style:italic;line-height:1.7;color:#333;margin-bottom:56px;padding-bottom:48px;border-bottom:1px solid var(--gray-light);}
+    h2.section-h{font-family:var(--serif);font-size:1.8rem;font-weight:700;line-height:1.2;margin:56px 0 20px;}
+    h3.sub-h{font-size:0.85rem;font-weight:600;letter-spacing:0.1em;color:#6a3fb5;margin:36px 0 12px;text-transform:uppercase;}
+    p{font-size:1.02rem;line-height:1.85;color:#333;margin-bottom:20px;}
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--gray-light);margin:48px 0;border:1px solid var(--gray-light);}
+    .stat-cell{background:var(--white);padding:28px 20px;text-align:center;}
+    .stat-number{font-family:var(--serif);font-size:2rem;font-weight:700;color:#6a3fb5;display:block;margin-bottom:6px;}
+    .stat-label{font-size:0.8rem;color:var(--gray);line-height:1.4;}
+    .species-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--gray-light);border:1px solid var(--gray-light);margin:48px 0;}
+    .species-cell{background:var(--white);padding:32px 24px;}
+    .species-cell .sc-emoji{font-size:1.8rem;margin-bottom:12px;display:block;}
+    .species-cell h4{font-family:var(--serif);font-size:1rem;font-weight:700;margin-bottom:10px;}
+    .species-cell p{font-size:0.88rem;line-height:1.6;color:var(--gray);margin:0;}
+    .pull-quote{margin:56px 0;padding:40px 48px;background:var(--black);color:var(--white);}
+    .pull-quote blockquote{font-family:var(--serif);font-size:1.4rem;font-style:italic;line-height:1.5;margin-bottom:16px;}
+    .pull-quote cite{font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);}
+    .info-panel{border:1px solid var(--gray-light);padding:36px;margin:40px 0;}
+    .info-panel h4{font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#6a3fb5;margin-bottom:20px;}
+    .info-panel ul{list-style:none;}
+    .info-panel ul li{padding:10px 0;border-bottom:1px solid var(--gray-light);font-size:0.95rem;line-height:1.6;color:#333;display:flex;gap:12px;}
+    .info-panel ul li:last-child{border-bottom:none;}
+    .info-panel ul li::before{content:'—';color:#6a3fb5;flex-shrink:0;}
+    .article-refs{margin-top:80px;padding-top:40px;border-top:1px solid var(--gray-light);}
+    .article-refs h3{font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray);margin-bottom:24px;}
+    .article-refs ol{list-style:none;counter-reset:ref;}
+    .article-refs ol li{counter-increment:ref;padding:10px 0;border-bottom:1px solid var(--gray-light);font-size:0.88rem;line-height:1.5;display:flex;gap:14px;align-items:baseline;}
+    .article-refs ol li:last-child{border-bottom:none;}
+    .article-refs ol li::before{content:counter(ref);font-size:0.7rem;font-weight:700;color:#6a3fb5;background:#f3eeff;padding:2px 7px;border-radius:2px;flex-shrink:0;}
+    .article-refs ol li a{color:#333;text-decoration:none;transition:color 0.2s;}
+    .article-refs ol li a:hover{color:#6a3fb5;}
+    .article-nav-bottom{border-top:1px solid var(--gray-light);background:#f4f4f2;padding:40px 60px;display:flex;justify-content:space-between;align-items:center;}
+    .article-nav-bottom a{display:flex;align-items:center;gap:10px;font-size:0.82rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--black);text-decoration:none;transition:color 0.2s;}
+    .article-nav-bottom a:hover{color:#6a3fb5;}
+    .next-label{font-size:0.7rem;font-weight:400;color:var(--gray);letter-spacing:0.04em;display:block;margin-bottom:4px;text-transform:none;}
+    @media(max-width:768px){nav{padding:0 24px;}.article-hero{padding:60px 30px;min-height:360px;}.article-hero-emoji{display:none;}.stats-row,.species-grid{grid-template-columns:repeat(2,1fr);}.pull-quote{padding:28px 24px;}.article-body{padding:48px 24px 80px;}.article-nav-bottom{padding:32px 24px;flex-direction:column;gap:24px;}}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-back"><i class="fas fa-arrow-left"></i> All Topics</a>
+    <a href="index.html" class="nav-logo">The Digital Green Journal</a>
+  </nav>
+
+  <div class="article-hero">
+    <div class="article-hero-emoji">🐾</div>
+    <div class="article-hero-content">
+      <div class="article-tag">Ecology & Wildlife &nbsp;·&nbsp; Topic 03</div>
+      <h1>Effect of Biodiversity Loss</h1>
+      <p>The silent unraveling of life's web — and what it means for humanity's survival on this planet.</p>
+      <div class="article-meta"><span>2026</span><span>7 min read</span><span>The Digital Green Journal</span></div>
+    </div>
+  </div>
+
+  <div class="article-body">
+    <p class="lead">Biodiversity — the extraordinary variety of life on Earth, from microorganisms to whales, from mosses to rainforests — is the foundation upon which all ecosystems function. It is the invisible infrastructure of life. Yet today, species are disappearing at a rate 100 to 1,000 times higher than the natural background extinction rate, driven almost entirely by human activity.</p>
+
+    <h2 class="section-h">What is Biodiversity?</h2>
+    <p>Biodiversity encompasses three levels: genetic diversity (the variety of genes within a species), species diversity (the number and variety of species in an area), and ecosystem diversity (the range of ecosystems in a region). All three are interconnected, and the loss of any one component can trigger cascading effects throughout the others.</p>
+    <p>Healthy biodiversity provides essential ecosystem services that humans depend on: clean air and water, fertile soils, pollination of crops, climate regulation, disease control, and raw materials for medicine and food. When biodiversity is lost, these services weaken — and humanity pays the price.</p>
+
+    <div class="stats-row">
+      <div class="stat-cell"><span class="stat-number">1M+</span><span class="stat-label">Species currently threatened with extinction (IPBES 2019)</span></div>
+      <div class="stat-cell"><span class="stat-number">68%</span><span class="stat-label">Decline in global wildlife populations since 1970 (WWF)</span></div>
+      <div class="stat-cell"><span class="stat-number">75%</span><span class="stat-label">Of Earth's land surface significantly altered by humans</span></div>
+      <div class="stat-cell"><span class="stat-number">500K</span><span class="stat-label">Species with insufficient habitat for long-term survival</span></div>
+    </div>
+
+    <h2 class="section-h">Causes of Biodiversity Loss</h2>
+    <h3 class="sub-h">Habitat Destruction</h3>
+    <p>The conversion of natural habitats — forests, wetlands, grasslands, and coral reefs — for agriculture, urban development, and resource extraction is the leading driver of biodiversity loss. When a habitat is destroyed, the species that depend on it lose their homes, food sources, and breeding grounds.</p>
+    <h3 class="sub-h">Climate Change</h3>
+    <p>Rising temperatures, shifting seasons, ocean acidification, and sea-level rise are altering the conditions species need to survive. Many cannot adapt quickly enough to these rapid changes. Coral reefs — among the most biodiverse ecosystems on Earth — are particularly threatened by warming oceans and acidification.</p>
+    <h3 class="sub-h">Pollution</h3>
+    <p>Chemical pollutants — pesticides, fertilizer runoff, plastic waste, heavy metals — contaminate soil, water, and air, poisoning organisms throughout the food chain. Plastic pollution has now been found in the stomachs of seabirds, fish, and even deep-sea creatures.</p>
+    <h3 class="sub-h">Invasive Species and Overexploitation</h3>
+    <p>Non-native species introduced to new environments can outcompete, prey upon, or introduce disease to native species. Overfishing, poaching, and unsustainable harvesting deplete populations faster than they can recover.</p>
+
+    <h2 class="section-h">Effects of Biodiversity Loss</h2>
+    <div class="species-grid">
+      <div class="species-cell"><span class="sc-emoji">🌾</span><h4>Food Security</h4><p>75% of global food crops depend on animal pollination. Loss of pollinators directly threatens agricultural productivity worldwide.</p></div>
+      <div class="species-cell"><span class="sc-emoji">💊</span><h4>Medicine & Health</h4><p>Over 50% of modern medicines are derived from natural compounds. Many undiscovered species may hold cures for diseases we haven't yet beaten.</p></div>
+      <div class="species-cell"><span class="sc-emoji">🌊</span><h4>Ecosystem Collapse</h4><p>Keystone species play outsized roles in ecosystems. The loss of one can trigger cascading collapses throughout entire systems.</p></div>
+      <div class="species-cell"><span class="sc-emoji">🌦️</span><h4>Climate Regulation</h4><p>Forests and wetlands absorb CO₂ and regulate rainfall. As these ecosystems are damaged, their ability to buffer climate change decreases.</p></div>
+      <div class="species-cell"><span class="sc-emoji">🐠</span><h4>Ocean Health</h4><p>Coral reefs support 25% of all marine life. With reefs bleaching at record rates, millions of fish species and coastal communities are at risk.</p></div>
+      <div class="species-cell"><span class="sc-emoji">🦠</span><h4>Disease Spillover</h4><p>Biodiversity loss increases the risk of zoonotic diseases — illnesses that jump from animals to humans — as natural buffers break down.</p></div>
+    </div>
+
+    <div class="pull-quote">
+      <blockquote>"We are the first generation to feel the effect of climate change and the last generation that can do something about it — and the same is true of biodiversity."</blockquote>
+      <cite>David Attenborough, Naturalist and Broadcaster</cite>
+    </div>
+
+    <h2 class="section-h">Biodiversity in the Philippines</h2>
+    <p>The Philippines is one of the world's 18 megadiverse countries and a recognized global biodiversity hotspot. It hosts approximately 52,177 described species, of which about 67% are found nowhere else on Earth (endemic). This includes the Philippine Eagle — the world's largest eagle — the Tamaraw, the Irrawaddy dolphin, and hundreds of endemic plant species.</p>
+    <p>However, deforestation, coral reef degradation, and illegal wildlife trade have pushed many Philippine species to the brink. The country has lost over 90% of its original forest cover. Protecting Philippine biodiversity is not just an environmental issue — it is a cultural and economic imperative.</p>
+
+    <div class="info-panel">
+      <h4>Philippine Biodiversity Highlights</h4>
+      <ul>
+        <li>Over 52,000 described species, with ~67% endemic to the Philippines</li>
+        <li>Home to the Philippine Eagle, Tamaraw, and Irrawaddy dolphin</li>
+        <li>Second most biodiverse country per unit area in the world</li>
+        <li>Tubbataha Reef — a UNESCO World Heritage Site and richest marine ecosystem in the Pacific</li>
+        <li>The Coral Triangle — including Philippine waters — contains over 600 coral species and 2,000 fish species</li>
+      </ul>
+    </div>
+
+    <div class="article-refs">
+      <h3>References</h3>
+      <ol>
+        <li><a href="https://www.iucnredlist.org/" target="_blank">IUCN Red List of Threatened Species</a></li>
+        <li><a href="https://www.ipbes.net/global-assessment" target="_blank">IPBES – Global Assessment Report on Biodiversity and Ecosystem Services (2019)</a></li>
+        <li><a href="https://www.wwf.org.uk/learn/effects-of/biodiversity-loss" target="_blank">WWF – Living Planet Report 2022</a></li>
+        <li><a href="https://www.nationalgeographic.com/environment/article/biodiversity" target="_blank">National Geographic – Biodiversity</a></li>
+        <li><a href="https://www.un.org/sustainabledevelopment/biodiversity/" target="_blank">UN Sustainable Development – Biodiversity</a></li>
+        <li><a href="https://www.denr.gov.ph/index.php/biodiversity" target="_blank">DENR Philippines – Biodiversity Conservation</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="article-nav-bottom">
+    <a href="social.html"><i class="fas fa-arrow-left"></i> Climate Change and Its Impact</a>
+    <a href="waste.html"><span><span class="next-label">Next Article</span>Philippine Waste Management <i class="fas fa-arrow-right"></i></span></a>
+  </div>
+</body>
+</html>

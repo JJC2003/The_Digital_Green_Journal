@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Philippine Waste Management – The Digital Green Journal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{--black:#101010;--white:#fafaf8;--green:#2a6344;--green-pale:#eef6f1;--gray:#666;--gray-light:#e8e8e6;--accent:#e8b070;--serif:'Playfair Display',Georgia,serif;--sans:'DM Sans',sans-serif;}
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--sans);background:var(--white);color:var(--black);}
+    nav{position:fixed;top:0;left:0;width:100%;z-index:999;background:var(--white);border-bottom:1px solid var(--gray-light);display:flex;align-items:center;justify-content:space-between;padding:0 60px;height:64px;}
+    .nav-logo{font-family:var(--serif);font-size:1.1rem;font-weight:700;color:var(--black);text-decoration:none;}
+    .nav-back{display:flex;align-items:center;gap:8px;font-size:0.8rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--gray);text-decoration:none;transition:color 0.2s;}
+    .nav-back:hover{color:#b5612a;}
+    .article-hero{margin-top:64px;background:linear-gradient(160deg,#2d1207 0%,#7a3a14 60%,#a05020 100%);min-height:480px;display:flex;align-items:flex-end;padding:80px 120px;position:relative;overflow:hidden;}
+    .article-hero::before{content:'';position:absolute;inset:0;opacity:0.05;background-image:radial-gradient(circle at 2px 2px,#fff 1px,transparent 0);background-size:28px 28px;}
+    .article-hero-emoji{position:absolute;right:100px;top:50%;transform:translateY(-50%);font-size:10rem;opacity:0.08;}
+    .article-hero-content{position:relative;z-index:2;max-width:640px;}
+    .article-tag{display:inline-block;font-size:0.7rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:var(--accent);margin-bottom:20px;}
+    .article-hero h1{font-family:var(--serif);font-size:clamp(2rem,4vw,3.4rem);font-weight:900;color:var(--white);line-height:1.1;margin-bottom:20px;}
+    .article-hero p{font-size:1.05rem;line-height:1.7;color:rgba(255,255,255,0.7);}
+    .article-meta{display:flex;gap:28px;margin-top:28px;font-size:0.78rem;color:rgba(255,255,255,0.45);letter-spacing:0.06em;}
+    .article-body{max-width:740px;margin:0 auto;padding:80px 30px 100px;}
+    .lead{font-family:var(--serif);font-size:1.3rem;font-style:italic;line-height:1.7;color:#333;margin-bottom:56px;padding-bottom:48px;border-bottom:1px solid var(--gray-light);}
+    h2.section-h{font-family:var(--serif);font-size:1.8rem;font-weight:700;line-height:1.2;margin:56px 0 20px;}
+    h3.sub-h{font-size:0.85rem;font-weight:600;letter-spacing:0.1em;color:#b5612a;margin:36px 0 12px;text-transform:uppercase;}
+    p{font-size:1.02rem;line-height:1.85;color:#333;margin-bottom:20px;}
+    .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--gray-light);margin:48px 0;border:1px solid var(--gray-light);}
+    .stat-cell{background:var(--white);padding:28px 20px;text-align:center;}
+    .stat-number{font-family:var(--serif);font-size:2rem;font-weight:700;color:#b5612a;display:block;margin-bottom:6px;}
+    .stat-label{font-size:0.8rem;color:var(--gray);line-height:1.4;}
+    .law-block{border-left:3px solid #b5612a;padding:24px 28px;margin:28px 0;background:#fef9f5;}
+    .law-block h4{font-size:0.85rem;font-weight:700;color:#b5612a;margin-bottom:10px;letter-spacing:0.04em;}
+    .law-block p{font-size:0.95rem;line-height:1.75;color:#333;margin:0;}
+    .pull-quote{margin:56px 0;padding:40px 48px;background:var(--black);color:var(--white);}
+    .pull-quote blockquote{font-family:var(--serif);font-size:1.4rem;font-style:italic;line-height:1.5;margin-bottom:16px;}
+    .pull-quote cite{font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);}
+    .info-panel{border:1px solid var(--gray-light);padding:36px;margin:40px 0;}
+    .info-panel h4{font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#b5612a;margin-bottom:20px;}
+    .info-panel ul{list-style:none;}
+    .info-panel ul li{padding:10px 0;border-bottom:1px solid var(--gray-light);font-size:0.95rem;line-height:1.6;color:#333;display:flex;gap:12px;}
+    .info-panel ul li:last-child{border-bottom:none;}
+    .info-panel ul li::before{content:'—';color:#b5612a;flex-shrink:0;}
+    .article-refs{margin-top:80px;padding-top:40px;border-top:1px solid var(--gray-light);}
+    .article-refs h3{font-size:0.78rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gray);margin-bottom:24px;}
+    .article-refs ol{list-style:none;counter-reset:ref;}
+    .article-refs ol li{counter-increment:ref;padding:10px 0;border-bottom:1px solid var(--gray-light);font-size:0.88rem;line-height:1.5;display:flex;gap:14px;align-items:baseline;}
+    .article-refs ol li:last-child{border-bottom:none;}
+    .article-refs ol li::before{content:counter(ref);font-size:0.7rem;font-weight:700;color:#b5612a;background:#fff3ea;padding:2px 7px;border-radius:2px;flex-shrink:0;}
+    .article-refs ol li a{color:#333;text-decoration:none;transition:color 0.2s;}
+    .article-refs ol li a:hover{color:#b5612a;}
+    .article-nav-bottom{border-top:1px solid var(--gray-light);background:#f4f4f2;padding:40px 60px;display:flex;justify-content:space-between;align-items:center;}
+    .article-nav-bottom a{display:flex;align-items:center;gap:10px;font-size:0.82rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--black);text-decoration:none;transition:color 0.2s;}
+    .article-nav-bottom a:hover{color:#b5612a;}
+    .next-label{font-size:0.7rem;font-weight:400;color:var(--gray);letter-spacing:0.04em;display:block;margin-bottom:4px;text-transform:none;}
+    @media(max-width:768px){nav{padding:0 24px;}.article-hero{padding:60px 30px;min-height:360px;}.article-hero-emoji{display:none;}.stats-row{grid-template-columns:repeat(2,1fr);}.pull-quote{padding:28px 24px;}.article-body{padding:48px 24px 80px;}.article-nav-bottom{padding:32px 24px;flex-direction:column;gap:24px;}}
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="index.html" class="nav-back"><i class="fas fa-arrow-left"></i> All Topics</a>
+    <a href="index.html" class="nav-logo">The Digital Green Journal</a>
+  </nav>
+
+  <div class="article-hero">
+    <div class="article-hero-emoji">🗑️</div>
+    <div class="article-hero-content">
+      <div class="article-tag">Environmental Policy &nbsp;·&nbsp; Topic 04</div>
+      <h1>Philippine Waste Management</h1>
+      <p>Millions of tonnes, inadequate systems, and a nation at a crossroads — understanding the Philippines' mounting waste crisis.</p>
+      <div class="article-meta"><span>2025</span><span>7 min read</span><span>The Digital Green Journal</span></div>
+    </div>
+  </div>
+
+  <div class="article-body">
+    <p class="lead">The Philippines generates approximately 14.66 million tonnes of solid waste every year. Yet the infrastructure, policies, and enforcement mechanisms needed to manage this waste sustainably remain deeply inadequate. From overflowing landfills to rivers clogged with plastic, the waste crisis is one of the most urgent environmental challenges facing the Filipino people.</p>
+
+    <h2 class="section-h">The Scale of the Problem</h2>
+    <p>The Philippines is among the top ocean plastic polluters in the world. A 2015 study published in Science magazine ranked it fifth globally in mismanaged plastic waste reaching the ocean. The rapid growth of urban populations, the rise of single-use plastic packaging, and gaps in waste collection and segregation infrastructure have combined to create a mounting crisis.</p>
+    <p>Metro Manila alone generates over 9,000 tonnes of waste per day. Many cities still lack proper sanitary landfills, and illegal open dumpsites — which release methane, leachate, and toxic chemicals — remain widespread. The Payatas dumpsite in Quezon City became infamous in 2000 when a garbage avalanche killed over 200 people.</p>
+
+    <div class="stats-row">
+      <div class="stat-cell"><span class="stat-number">14.66M</span><span class="stat-label">Tonnes of solid waste generated in the Philippines annually</span></div>
+      <div class="stat-cell"><span class="stat-number">9,000+</span><span class="stat-label">Tonnes of waste generated in Metro Manila per day</span></div>
+      <div class="stat-cell"><span class="stat-number">#5</span><span class="stat-label">Philippines ranked 5th in global ocean plastic pollution (2015)</span></div>
+      <div class="stat-cell"><span class="stat-number">~40%</span><span class="stat-label">Waste collection rate — most waste remains unmanaged</span></div>
+    </div>
+
+    <h2 class="section-h">Types of Waste and Their Impact</h2>
+    <h3 class="sub-h">Plastic Waste</h3>
+    <p>Single-use plastics — sachets, straws, bags, and packaging — dominate Philippine waste streams. Many are too small or contaminated to be recycled and end up in waterways, eventually reaching the ocean. The marine plastic crisis threatens fish populations, coral reefs, and the livelihoods of fishing communities across the archipelago.</p>
+    <h3 class="sub-h">Organic Waste</h3>
+    <p>Organic materials make up approximately 52% of the Philippines' total waste. When dumped in landfills without proper management, organic waste decomposes anaerobically and releases methane — a potent greenhouse gas. Composting and biogas generation are underutilized but powerful solutions.</p>
+    <h3 class="sub-h">Electronic Waste (E-Waste)</h3>
+    <p>The Philippines generates a growing volume of discarded electronics — mobile phones, computers, batteries. E-waste contains hazardous substances like lead, mercury, and cadmium that can leach into soil and water. Formal e-waste recycling infrastructure remains limited, and much e-waste is handled informally, exposing workers to toxic substances.</p>
+
+    <div class="pull-quote">
+      <blockquote>"The waste problem in the Philippines is not just a garbage problem — it is a systems problem, a governance problem, and ultimately a social justice problem."</blockquote>
+      <cite>Environmental Management Bureau, DENR Philippines</cite>
+    </div>
+
+    <h2 class="section-h">Laws and Policies</h2>
+    <div class="law-block">
+      <h4>Republic Act 9003 – Ecological Solid Waste Management Act (2000)</h4>
+      <p>This landmark law mandates waste segregation at source, composting of organic waste, and the closure of open dumpsites in favor of sanitary landfills. It requires all local government units (LGUs) to develop waste management plans. Implementation remains uneven across the country.</p>
+    </div>
+    <div class="law-block">
+      <h4>Republic Act 9275 – Philippine Clean Water Act (2004)</h4>
+      <p>Prohibits the discharge of pollutants into Philippine water bodies and establishes water quality standards. Enforcement challenges remain, with many waterways still heavily polluted by waste and industrial runoff.</p>
+    </div>
+    <div class="law-block">
+      <h4>Republic Act 8749 – Philippine Clean Air Act (1999)</h4>
+      <p>Prohibits open burning of garbage, a previously common practice. Enforcement has significantly reduced this practice in urban areas, though it persists in some rural communities.</p>
+    </div>
+
+    <h2 class="section-h">Solutions and the Path Forward</h2>
+    <h3 class="sub-h">Waste Segregation and Composting</h3>
+    <p>Properly segregating waste at source — into biodegradable, recyclable, and residual — is the foundation of effective solid waste management. Composting organic waste reduces landfill volume and produces valuable soil amendments. Cities like San Fernando, Pampanga have demonstrated that community-based composting programs can significantly reduce waste sent to landfills.</p>
+    <h3 class="sub-h">Banning Single-Use Plastics</h3>
+    <p>Several Philippine cities and municipalities have implemented bans or restrictions on single-use plastics. National-level legislation remains under discussion. Extended producer responsibility (EPR) policies — which require companies to manage the end-of-life of their packaging — are increasingly being considered as a systemic solution.</p>
+
+    <div class="info-panel">
+      <h4>What You Can Do as a Filipino Consumer</h4>
+      <ul>
+        <li>Segregate your waste properly — biodegradable, recyclable, and residual</li>
+        <li>Refuse unnecessary single-use plastics; bring a reusable bag and bottle</li>
+        <li>Compost food scraps at home or in your community garden</li>
+        <li>Support local businesses with sustainable packaging practices</li>
+        <li>Participate in community clean-up drives and waste awareness programs</li>
+        <li>Advocate for stronger enforcement of RA 9003 in your local government</li>
+      </ul>
+    </div>
+
+    <div class="article-refs">
+      <h3>References</h3>
+      <ol>
+        <li><a href="https://www.denr.gov.ph/" target="_blank">DENR – Department of Environment and Natural Resources Philippines</a></li>
+        <li><a href="https://nswmc.emb.gov.ph/" target="_blank">National Solid Waste Management Commission (NSWMC)</a></li>
+        <li><a href="https://emb.gov.ph/" target="_blank">Environmental Management Bureau (EMB) Philippines</a></li>
+        <li><a href="https://www.worldbank.org/en/country/philippines/publication/philippine-environment-monitor" target="_blank">World Bank – Philippine Environment Monitor</a></li>
+        <li><a href="https://www.unep.org/resources/report/global-waste-management-outlook" target="_blank">UNEP – Global Waste Management Outlook</a></li>
+        <li><a href="https://science.sciencemag.org/content/347/6223/768" target="_blank">Jambeck et al. (2015) – Plastic Waste Inputs from Land into the Ocean, Science</a></li>
+      </ol>
+    </div>
+  </div>
+
+  <div class="article-nav-bottom">
+    <a href="biodiversity.html"><i class="fas fa-arrow-left"></i> Effect of Biodiversity Loss</a>
+    <a href="5rs.html"><span><span class="next-label">Next Article</span>Refuse, Reduce, Reuse, Repair & Recycle <i class="fas fa-arrow-right"></i></span></a>
+  </div>
+</body>
+</html>
